@@ -1,4 +1,4 @@
-# ⚔️ SQL Arena: Gamified Database Challenges
+# ⚔️ Query War: Gamified Database Challenges
 
 Welcome to **SQL Arena**! This repository is an open-source learning platform designed to help you master SQL through immersive, story-driven investigations and real-world database scenarios.
 
