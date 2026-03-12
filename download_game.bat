@@ -7,7 +7,7 @@ color 0B
 :: CONFIGURATION
 :: Set your base GitHub Raw URL here so the script knows where to download from
 :: ==============================================================================
-set "BASE_URL=https://github.com/prabeenragupathi/QueryWars/tree/main"
+set "BASE_URL=https://raw.githubusercontent.com/prabeenragupathi/QueryWars/main"
 set "TEMP_CONFIG=temp_games_meta.txt"
 
 echo ===================================================
