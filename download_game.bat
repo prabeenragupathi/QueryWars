@@ -40,6 +40,7 @@ echo Fetching latest missions from QueryWars servers...
 curl -s -L -o %TEMP_CONFIG% "%BASE_URL%/config/games_meta.txt"
 
 if not exist %TEMP_CONFIG% (
+    color 0C
     echo [ERROR] Failed to fetch mission list from GitHub. Check your internet connection.
     pause
     exit /b
@@ -70,24 +71,36 @@ for /f "tokens=1,2,3 delims=|" %%A in (%TEMP_CONFIG%) do (
 )
 
 if "%sql_file%"=="" (
+    color 0C
     echo [ERROR] Invalid Mission ID selected.
     del %TEMP_CONFIG%
     pause
     exit /b
 )
 
-:: 5. DOWNLOAD AND EXECUTE THE SQL FILE
+:: 5. DOWNLOAD, CREATE DB, AND EXECUTE THE SQL FILE
 echo.
 echo Preparing Mission: %mission_name%
 echo Downloading %sql_file%...
 curl -s -L -o "%sql_file%" "%BASE_URL%/scripts/%sql_file%"
+
+:: Create the target database if it isn't the default 'postgres'
+if /I not "%pg_db%"=="postgres" (
+    echo.
+    echo Ensuring database '%pg_db%' exists...
+    psql -U %pg_user% -h %pg_host% -p %pg_port% -d postgres -c "CREATE DATABASE %pg_db%;" 2>nul
+)
 
 echo.
 echo Deploying database schema and injecting data into '%pg_db%'...
 psql -U %pg_user% -h %pg_host% -p %pg_port% -d %pg_db% -f "%sql_file%"
 
 :: 6. CLEANUP
-del %TEMP_CONFIG%
+echo.
+echo Cleaning up temporary files...
+if exist "%TEMP_CONFIG%" del "%TEMP_CONFIG%"
+if exist "%sql_file%" del "%sql_file%"
+color 0A
 echo.
 echo ===================================================
 echo SUCCESS! Mission deployed successfully.
