@@ -78,11 +78,17 @@ if "%sql_file%"=="" (
     exit /b
 )
 
+:: Automatically derive the PDF filename (swaps .sql for .pdf)
+set "pdf_file=%sql_file:.sql=.pdf%"
+
 :: 5. DOWNLOAD, CREATE DB, AND EXECUTE THE SQL FILE
 echo.
 echo Preparing Mission: %mission_name%
 echo Downloading %sql_file%...
 curl -s -L -o "%sql_file%" "%BASE_URL%/scripts/%sql_file%"
+
+echo Downloading mission briefing (%pdf_file%)...
+curl -s -L -o "%pdf_file%" "%BASE_URL%/questions/%pdf_file%"
 
 :: Create the target database if it isn't the default 'postgres'
 if /I not "%pg_db%"=="postgres" (
@@ -106,4 +112,10 @@ echo ===================================================
 echo SUCCESS! Mission deployed successfully.
 echo Open your PostgreSQL terminal/GUI and connect to '%pg_db%'.
 echo ===================================================
+pause
+
+:: Automatically open the PDF file in their default PDF viewer!
+echo Opening mission briefing...
+start "" "%pdf_file%"
+
 pause
