@@ -1,61 +1,96 @@
 @echo off
-title SQL War - Game Downloader
-color 0A
+setlocal enabledelayedexpansion
+title QueryWars - Database Installer
+color 0B
+
+:: ==============================================================================
+:: CONFIGURATION
+:: Set your base GitHub Raw URL here so the script knows where to download from
+:: ==============================================================================
+set "BASE_URL=https://github.com/prabeenragupathi/QueryWars/tree/main"
+set "TEMP_CONFIG=temp_games_meta.txt"
 
 echo ===================================================
-echo       WELCOME TO THE SQL WAR GAME INSTALLER
+echo             WELCOME TO QUERYWARS
+echo       Automated PostgreSQL Mission Setup
 echo ===================================================
 echo.
 
-:: Ask the user for their Postgres username so the script has permission to build the DB
-set /p pg_user="Enter your PostgreSQL username (usually 'postgres'): "
+:: 1. COLLECT DATABASE CREDENTIALS
+echo [Database Connection Details]
+set /p pg_user="Username (default 'postgres'): "
 if "%pg_user%"=="" set pg_user=postgres
 
-echo.
-echo Please select the database challenge you want to install:
-echo [1] Round 3: The Echoes of Eelam (Intelligence Forensics)
-echo [2] Round 2: TechMart E-Commerce
-echo [3] Round 2: Corporate HR
-echo.
+set /p pg_pass="Password (press Enter if none/trusted): "
 
-set /p choice="Enter the index number (1-3): "
+set /p pg_db="Target Database (default 'postgres'): "
+if "%pg_db%"=="" set pg_db=postgres
 
-:: Map the user's choice to the raw GitHub URL
-if "%choice%"=="1" (
-    set db_name=eelam_forensics
-    set sql_url=https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/main/questions/Eelam/eelam_forensics.sql
-    set file_name=eelam_forensics.sql
-) else if "%choice%"=="2" (
-    set db_name=techmart_db
-    set sql_url=https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/main/questions/TechMart/techmart.sql
-    set file_name=techmart.sql
-) else if "%choice%"=="3" (
-    set db_name=corporate_hr_db
-    set sql_url=https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/main/questions/CorporateHR/corporate_hr.sql
-    set file_name=corporate_hr.sql
-) else (
-    echo Invalid choice! Exiting...
+set /p pg_host="Host (default 'localhost'): "
+if "%pg_host%"=="" set pg_host=localhost
+
+set /p pg_port="Port (default '5432'): "
+if "%pg_port%"=="" set pg_port=5432
+
+:: Set the password as an environment variable so psql uses it silently
+if not "%pg_pass%"=="" set PGPASSWORD=%pg_pass%
+
+echo.
+echo Fetching latest missions from QueryWars servers...
+curl -s -L -o %TEMP_CONFIG% "%BASE_URL%/config/games_meta.txt"
+
+if not exist %TEMP_CONFIG% (
+    echo [ERROR] Failed to fetch mission list from GitHub. Check your internet connection.
     pause
     exit /b
 )
 
-echo.
-echo Downloading %file_name% from GitHub...
-curl -s -L -o %file_name% %sql_url%
-
-echo.
-echo Creating database '%db_name%' (if it doesn't exist)...
-:: Connects to default postgres DB just to run the CREATE DATABASE command
-psql -U %pg_user% -d postgres -c "CREATE DATABASE %db_name%;" 2>nul
-
-echo.
-echo Populating the database with schemas and data...
-psql -U %pg_user% -d %db_name% -f %file_name%
-
+:: 2. DYNAMICALLY BUILD THE MENU FROM THE CONFIG FILE
 echo.
 echo ===================================================
-echo SUCCESS! The challenge is ready.
-echo Open your psql terminal and connect using:
-echo \c %db_name%
+echo               AVAILABLE MISSIONS
+echo ===================================================
+for /f "tokens=1,2,3 delims=|" %%A in (%TEMP_CONFIG%) do (
+    echo [%%A] %%B
+)
+echo ===================================================
+echo.
+
+:: 3. GET USER CHOICE
+set /p choice="Enter the Mission ID you want to install: "
+
+:: 4. FIND THE MATCHING SQL FILE FOR THE CHOSEN ID
+set "sql_file="
+set "mission_name="
+for /f "tokens=1,2,3 delims=|" %%A in (%TEMP_CONFIG%) do (
+    if "%%A"=="%choice%" (
+        set "mission_name=%%B"
+        set "sql_file=%%C"
+    )
+)
+
+if "%sql_file%"=="" (
+    echo [ERROR] Invalid Mission ID selected.
+    del %TEMP_CONFIG%
+    pause
+    exit /b
+)
+
+:: 5. DOWNLOAD AND EXECUTE THE SQL FILE
+echo.
+echo Preparing Mission: %mission_name%
+echo Downloading %sql_file%...
+curl -s -L -o "%sql_file%" "%BASE_URL%/scripts/%sql_file%"
+
+echo.
+echo Deploying database schema and injecting data into '%pg_db%'...
+psql -U %pg_user% -h %pg_host% -p %pg_port% -d %pg_db% -f "%sql_file%"
+
+:: 6. CLEANUP
+del %TEMP_CONFIG%
+echo.
+echo ===================================================
+echo SUCCESS! Mission deployed successfully.
+echo Open your PostgreSQL terminal/GUI and connect to '%pg_db%'.
 echo ===================================================
 pause
