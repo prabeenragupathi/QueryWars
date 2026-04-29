@@ -1,1 +1,2 @@
 1|The Echoes of Eelam (OSINT Forensics)|eelam_forensics.sql
+2|The Big Bull: Scam 1992|big_bull.sql

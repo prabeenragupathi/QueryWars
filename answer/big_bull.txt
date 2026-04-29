@@ -1,0 +1,3230 @@
+-- ============================================================
+-- CHAPTER 1 QUESTIONS: "The Boy from Raipur" (1954 - 1976)
+-- ============================================================
+-- SQL Concepts Covered: SELECT, WHERE, AND/OR, ORDER BY,
+--                       COUNT, DISTINCT, BETWEEN, LIKE, IS NOT NULL
+-- ============================================================
+
+
+-- ============================================================
+-- QUESTION 1 (Intro Level)
+-- Story: "It is 1954. Somewhere in India, a boy is born who
+--         will one day shake the entire stock market. Let's
+--         find him first."
+--
+-- Task: Select all details of the main character.
+--
+-- Hint: Use is_main_character to find him.
+-- ============================================================
+
+SELECT *
+FROM characters
+WHERE is_main_character = TRUE;
+
+
+-- ============================================================
+-- QUESTION 2 (Intro Level)
+-- Story: "Harshad was born on a specific date that he was
+--         proud of. But many records have been tampered with.
+--         Find only those records that match his exact
+--         birth date."
+--
+-- Task: Find all characters born on July 29, 1954.
+--
+-- Hint: Filter using birth_date.
+-- ============================================================
+
+SELECT full_name, birth_date, birth_city, community
+FROM characters
+WHERE birth_date = '1954-07-29';
+
+
+-- ============================================================
+-- QUESTION 3 (Easy)
+-- Story: "Not everyone born on that date is our man.
+--         Harshad came from a Gujarati family, born in Raipur.
+--         His father's name was Shantilal Mehta.
+--         Can you find the exact match?"
+--
+-- Task: Find the character born on July 29, 1954 in Raipur
+--       from Gujarati community whose father is Shantilal Mehta.
+--
+-- Hint: Use AND to combine multiple conditions.
+-- ============================================================
+
+SELECT full_name, birth_date, birth_city, community, father_name
+FROM characters
+WHERE birth_date   = '1954-07-29'
+  AND birth_city   = 'Raipur'
+  AND community    = 'Gujarati'
+  AND father_name  = 'Shantilal Mehta';
+
+
+-- ============================================================
+-- QUESTION 4 (Easy)
+-- Story: "Harshad had brothers. His family was the engine
+--         behind his ambition. Find his real family members —
+--         not the noise."
+--
+-- Task: From the family table, find all real family members
+--       of character_id 1, ordered by relation.
+--
+-- Hint: Filter is_real = TRUE and character_id = 1.
+-- ============================================================
+
+SELECT member_name, relation, occupation
+FROM family
+WHERE character_id = 1
+  AND is_real      = TRUE
+ORDER BY relation;
+
+
+-- ============================================================
+-- QUESTION 5 (Easy)
+-- Story: "The Mehta family left Raipur and came to Bombay
+--         chasing a dream. But when exactly did they move,
+--         and where did they settle in Bombay?"
+--
+-- Task: Find all real cities Harshad (character_id = 1)
+--       actually lived in, ordered by the year he moved there.
+--
+-- Hint: Filter is_real = TRUE, order by moved_year.
+-- ============================================================
+
+SELECT city, state, moved_year, reason
+FROM cities_lived
+WHERE character_id = 1
+  AND is_real      = TRUE
+ORDER BY moved_year;
+
+
+-- ============================================================
+-- QUESTION 6 (Easy)
+-- Story: "Harshad grew up in Kandivali, Bombay — a chawl
+--         boy in a city that didn't care about your past,
+--         only your hustle. Which schools and colleges
+--         did he actually attend?"
+--
+-- Task: Find all real education records of character_id 1,
+--       ordered by start_year.
+--
+-- Hint: Filter is_real = TRUE, character_id = 1.
+-- ============================================================
+
+SELECT institution, degree, city, start_year, end_year
+FROM education
+WHERE character_id = 1
+  AND is_real      = TRUE
+ORDER BY start_year;
+
+
+-- ============================================================
+-- QUESTION 7 (Medium)
+-- Story: "After B.Com, Harshad had no godfather, no
+--         connections, no money. He took whatever work
+--         he could find. How many real jobs did he do
+--         before entering the stock market?"
+--
+-- Task: Count the number of real jobs held by character_id 1.
+--
+-- Hint: Use COUNT with WHERE filters.
+-- ============================================================
+
+SELECT COUNT(*) AS total_real_jobs
+FROM early_jobs
+WHERE character_id = 1
+  AND is_real      = TRUE;
+
+
+-- ============================================================
+-- QUESTION 8 (Medium)
+-- Story: "From hosiery to diamonds to cement — Harshad
+--         tried it all. List all his real jobs with salary,
+--         from lowest paid to highest paid."
+--
+-- Task: Find all real jobs of character_id 1,
+--       ordered by monthly_salary ascending.
+--
+-- Hint: ORDER BY monthly_salary ASC.
+-- ============================================================
+
+SELECT job_title, employer, monthly_salary, start_year, end_year
+FROM early_jobs
+WHERE character_id = 1
+  AND is_real      = TRUE
+ORDER BY monthly_salary ASC;
+
+
+-- ============================================================
+-- QUESTION 9 (Medium)
+-- Story: "Before becoming the Big Bull, Harshad was just
+--         another man surviving Bombay. What was his total
+--         earning capacity across all his real jobs
+--         combined per month?"
+--
+-- Task: Find the SUM of monthly_salary for all real jobs
+--       of character_id 1.
+--
+-- Hint: Use SUM() aggregate function.
+-- ============================================================
+
+SELECT SUM(monthly_salary) AS total_monthly_earnings
+FROM early_jobs
+WHERE character_id = 1
+  AND is_real      = TRUE;
+
+
+-- ============================================================
+-- QUESTION 10 (Medium)
+-- Story: "The turning point was near. Harshad's last real
+--         job before the stock market was as a Sub-Broker
+--         Assistant. Find that job — the one that changed
+--         everything."
+--
+-- Task: Find the job of character_id 1 where job_title
+--       contains the word 'Broker'.
+--
+-- Hint: Use LIKE with wildcard %.
+-- ============================================================
+
+SELECT job_title, employer, city, start_year, end_year, monthly_salary
+FROM early_jobs
+WHERE character_id = 1
+  AND job_title LIKE '%Broker%';
+
+
+-- ============================================================
+-- QUESTION 11 (Medium)
+-- Story: "By 1979, Harshad had already tried multiple jobs.
+--         Find all real jobs he held between 1977 and 1980
+--         — the years of grinding before the breakthrough."
+--
+-- Task: Find real jobs of character_id 1 where
+--       start_year is between 1977 and 1980.
+--
+-- Hint: Use BETWEEN.
+-- ============================================================
+
+SELECT job_title, employer, start_year, end_year, monthly_salary
+FROM early_jobs
+WHERE character_id  = 1
+  AND is_real       = TRUE
+  AND start_year    BETWEEN 1977 AND 1980
+ORDER BY start_year;
+
+
+-- ============================================================
+-- QUESTION 12 (Hard)
+-- Story: "Someone is trying to forge records and replace
+--         Harshad's identity. Find all characters who share
+--         his birth date AND birth city — potential
+--         impostors in the database."
+--
+-- Task: Find all characters with birth_date = '1954-07-29'
+--       AND birth_city = 'Raipur', show their full_name
+--       and father_name to spot differences.
+--
+-- Hint: Use AND conditions, compare father_name carefully.
+-- ============================================================
+
+SELECT full_name, birth_date, birth_city, community, father_name
+FROM characters
+WHERE birth_date = '1954-07-29'
+  AND birth_city = 'Raipur'
+ORDER BY full_name;
+
+
+-- ============================================================
+-- QUESTION 13 (Hard)
+-- Story: "Harshad's two real brothers — Ashwin and Sudhir —
+--         were part of his business empire later. But the
+--         family table has noise. Find only male family
+--         members (brothers) who are real."
+--
+-- Task: Find all real family members of character_id 1
+--       whose relation is 'Brother'.
+--
+-- Hint: Filter relation = 'Brother' and is_real = TRUE.
+-- ============================================================
+
+SELECT member_name, relation, birth_city, occupation
+FROM family
+WHERE character_id = 1
+  AND relation     = 'Brother'
+  AND is_real      = TRUE;
+
+
+-- ============================================================
+-- QUESTION 14 (Hard)
+-- Story: "The records show Harshad lived in many cities —
+--         but most of them are planted lies. Show the
+--         DISTINCT real states he actually lived in."
+--
+-- Task: Find DISTINCT states from cities_lived where
+--       character_id = 1 and is_real = TRUE.
+--
+-- Hint: Use SELECT DISTINCT.
+-- ============================================================
+
+SELECT DISTINCT state, city, moved_year
+FROM cities_lived
+WHERE character_id = 1
+  AND is_real      = TRUE
+ORDER BY moved_year;
+
+
+-- ============================================================
+-- QUESTION 15 (Chapter Boss — Hard)
+-- Story: "You have now traced the full early life of
+--         Harshad Mehta. Build his complete profile —
+--         his real birth details, his real final education,
+--         and the job that first introduced him to
+--         the stock market world."
+--
+-- Task: Write a query that shows:
+--         - full_name, birth_date, birth_city (from characters)
+--         - His highest education: institution, degree (from education)
+--           (hint: highest end_year among real records)
+--         - His last real job before stock market: job_title,
+--           employer (from early_jobs)
+--           (hint: highest start_year among real records)
+--
+-- Hint: Use subqueries with MAX() to find
+--       the most recent education and job.
+-- ============================================================
+
+SELECT
+    c.full_name,
+    c.birth_date,
+    c.birth_city,
+    e.institution,
+    e.degree,
+    j.job_title,
+    j.employer
+FROM characters c
+
+JOIN education e
+    ON e.character_id = c.character_id
+    AND e.is_real     = TRUE
+    AND e.end_year    = (
+        SELECT MAX(end_year)
+        FROM education
+        WHERE character_id = 1
+          AND is_real      = TRUE
+    )
+
+JOIN early_jobs j
+    ON j.character_id = c.character_id
+    AND j.is_real     = TRUE
+    AND j.start_year  = (
+        SELECT MAX(start_year)
+        FROM early_jobs
+        WHERE character_id = 1
+          AND is_real      = TRUE
+    )
+
+WHERE c.character_id    = 1
+  AND c.is_main_character = TRUE;
+
+-- ============================================================
+-- CHAPTER 2 QUESTIONS: "The BSE Floor" (1980 - 1986)
+-- ============================================================
+-- SQL Concepts Covered: SELECT, WHERE, AND/OR, JOIN,
+--                       LEFT JOIN, GROUP BY, HAVING,
+--                       COUNT, SUM, MAX, ORDER BY, DISTINCT
+-- ============================================================
+
+
+-- ============================================================
+-- QUESTION 1 (Intro Level)
+-- Story: "It is 1980. Bombay's BSE floor is a jungle of
+--         numbers, screaming brokers, and chalk boards.
+--         Harshad walks in as nobody. Find his official
+--         BSE member record."
+--
+-- Task: Find the BSE member record where character_id = 1.
+--
+-- Hint: Simple SELECT with WHERE.
+-- ============================================================
+
+-- ANSWER:
+SELECT *
+FROM bse_members
+WHERE character_id = 1;
+
+
+-- ============================================================
+-- QUESTION 2 (Intro Level)
+-- Story: "The BSE has hundreds of brokers. How many of them
+--         registered in the same year as Harshad — 1984?
+--         He wasn't alone, but he was different."
+--
+-- Task: Count all BSE members who registered in 1984.
+--
+-- Hint: Use COUNT with WHERE.
+-- ============================================================
+
+-- ANSWER:
+SELECT COUNT(*) AS members_registered_in_1984
+FROM bse_members
+WHERE registration_year = 1984;
+
+
+-- ============================================================
+-- QUESTION 3 (Easy)
+-- Story: "Many people share the Mehta surname on the BSE
+--         floor. Find all active BSE members whose last
+--         name contains 'Mehta' — Harshad needs to know
+--         his competition."
+--
+-- Task: Find all active bse_members whose full_name
+--       contains 'Mehta', ordered by registration_year.
+--
+-- Hint: Use LIKE and is_active = TRUE.
+-- ============================================================
+
+-- ANSWER:
+SELECT full_name, member_type, registration_year, firm_name
+FROM bse_members
+WHERE full_name LIKE '%Mehta%'
+  AND is_active = TRUE
+ORDER BY registration_year;
+
+
+-- ============================================================
+-- QUESTION 4 (Easy)
+-- Story: "Harshad was not born a Full Member. He started
+--         as a Sub-Broker. Find all Sub-Brokers who were
+--         active in Bombay during 1980 to 1984 — the era
+--         when Harshad was grinding his way up."
+--
+-- Task: Find all active Sub-Brokers in Bombay who
+--       registered between 1980 and 1984.
+--
+-- Hint: Use BETWEEN and AND conditions.
+-- ============================================================
+
+-- ANSWER:
+SELECT full_name, registration_year, firm_name
+FROM bse_members
+WHERE member_type       = 'Sub Broker'
+  AND city              = 'Bombay'
+  AND is_active         = TRUE
+  AND registration_year BETWEEN 1980 AND 1984
+ORDER BY registration_year;
+
+
+-- ============================================================
+-- QUESTION 5 (Easy)
+-- Story: "Before Growmore, Harshad learned everything
+--         from one man on the BSE floor. Find his
+--         real mentor — the person who truly taught him
+--         the game."
+--
+-- Task: Find all real mentor records for character_id = 1
+--       from the mentors table.
+--
+-- Hint: Filter is_real = TRUE and character_id = 1.
+-- ============================================================
+
+-- ANSWER:
+SELECT mentor_name, mentor_firm, relationship,
+       year_met, taught_skill
+FROM mentors
+WHERE character_id = 1
+  AND is_real      = TRUE;
+
+
+-- ============================================================
+-- QUESTION 6 (Easy)
+-- Story: "In 1984, Harshad did the most important thing
+--         of his life — he registered his own firm.
+--         Find the real firm he founded, not the noise."
+--
+-- Task: Find all real firms where character_id = 1.
+--
+-- Hint: Filter is_real = TRUE and character_id = 1.
+-- ============================================================
+
+-- ANSWER:
+SELECT firm_name, founder_name, registration_year,
+       firm_type, capital_at_start
+FROM firms
+WHERE character_id = 1
+  AND is_real      = TRUE
+ORDER BY registration_year;
+
+
+-- ============================================================
+-- QUESTION 7 (Medium)
+-- Story: "On the BSE floor, Harshad traded aggressively
+--         from day one. Find all his real trades and
+--         calculate the total profit or loss he made
+--         across all of them."
+--
+-- Task: Find the SUM of profit_loss for all trades
+--       where is_harshad = TRUE.
+--
+-- Hint: Use SUM() aggregate.
+-- ============================================================
+
+-- ANSWER:
+SELECT SUM(profit_loss) AS total_profit_loss
+FROM stock_trades_early
+WHERE is_harshad = TRUE;
+
+
+-- ============================================================
+-- QUESTION 8 (Medium)
+-- Story: "Harshad had a sixth sense for certain stocks.
+--         Which stock did he trade the most number of
+--         times in his early career?"
+--
+-- Task: From stock_trades_early where is_harshad = TRUE,
+--       GROUP BY stock_name and COUNT trades,
+--       order by count descending.
+--
+-- Hint: Use GROUP BY with COUNT, ORDER BY DESC.
+-- ============================================================
+
+-- ANSWER:
+SELECT stock_name,
+       COUNT(*)          AS total_trades,
+       SUM(profit_loss)  AS total_profit
+FROM stock_trades_early
+WHERE is_harshad = TRUE
+GROUP BY stock_name
+ORDER BY total_trades DESC;
+
+
+-- ============================================================
+-- QUESTION 9 (Medium)
+-- Story: "Not every trade was a winner. Even the Big Bull
+--         had bad days. Find all Harshad's real trades
+--         where he made a loss — the ones he never
+--         talked about."
+--
+-- Task: Find all trades where is_harshad = TRUE
+--       and profit_loss < 0, ordered by profit_loss ASC.
+--
+-- Hint: Filter profit_loss < 0.
+-- ============================================================
+
+-- ANSWER:
+SELECT stock_name, trade_type, quantity,
+       price_per_share, trade_year, profit_loss
+FROM stock_trades_early
+WHERE is_harshad  = TRUE
+  AND profit_loss < 0
+ORDER BY profit_loss ASC;
+
+
+-- ============================================================
+-- QUESTION 10 (Medium)
+-- Story: "Harshad's best year in this early phase was
+--         1986 — the year everything clicked. How much
+--         total profit did he make just in 1986?"
+--
+-- Task: Find SUM of profit_loss for is_harshad = TRUE
+--       and trade_year = 1986.
+--
+-- Hint: Add trade_year filter to your WHERE clause.
+-- ============================================================
+
+-- ANSWER:
+SELECT trade_year,
+       COUNT(*)         AS total_trades,
+       SUM(profit_loss) AS yearly_profit
+FROM stock_trades_early
+WHERE is_harshad = TRUE
+  AND trade_year = 1986
+GROUP BY trade_year;
+
+
+-- ============================================================
+-- QUESTION 11 (Medium)
+-- Story: "Year by year, Harshad was getting bigger. Show
+--         his total profit for EACH year from 1984 to 1986
+--         so we can see his growth trajectory."
+--
+-- Task: GROUP BY trade_year for is_harshad = TRUE,
+--       show SUM(profit_loss) per year, ordered by year.
+--
+-- Hint: GROUP BY trade_year, ORDER BY trade_year ASC.
+-- ============================================================
+
+-- ANSWER:
+SELECT trade_year,
+       COUNT(*)         AS total_trades,
+       SUM(profit_loss) AS yearly_profit
+FROM stock_trades_early
+WHERE is_harshad = TRUE
+GROUP BY trade_year
+ORDER BY trade_year ASC;
+
+
+-- ============================================================
+-- QUESTION 12 (Medium)
+-- Story: "Harshad's life changed on key dates. Find all
+--         his real personal milestones ordered by year —
+--         the real story of how he rose in this chapter."
+--
+-- Task: Find all real personal milestones for
+--       character_id = 1, ordered by event_year.
+--
+-- Hint: Filter is_real = TRUE, character_id = 1.
+-- ============================================================
+
+-- ANSWER:
+SELECT event, event_year, event_city, significance
+FROM personal_milestones
+WHERE character_id = 1
+  AND is_real      = TRUE
+ORDER BY event_year;
+
+
+-- ============================================================
+-- QUESTION 13 (Hard)
+-- Story: "The BSE floor had many cities but Bombay was
+--         the heart. Find each city and count how many
+--         Full Members were active there — but only show
+--         cities that had MORE than 5 active Full Members."
+--
+-- Task: GROUP BY city for Full Members where is_active = TRUE,
+--       use HAVING COUNT(*) > 5.
+--
+-- Hint: Use GROUP BY + HAVING.
+-- ============================================================
+
+-- ANSWER:
+SELECT city,
+       COUNT(*) AS active_full_members
+FROM bse_members
+WHERE member_type = 'Full Member'
+  AND is_active   = TRUE
+GROUP BY city
+HAVING COUNT(*) > 5
+ORDER BY active_full_members DESC;
+
+
+-- ============================================================
+-- QUESTION 14 (Hard)
+-- Story: "Harshad's firm Growmore needed a BSE membership
+--         to operate. Join the firms table with bse_members
+--         to show Harshad's firm details alongside his
+--         BSE registration details."
+--
+-- Task: JOIN firms and bse_members on character_id,
+--       filter where firms.character_id = 1
+--       and firms.is_real = TRUE.
+--
+-- Hint: Use INNER JOIN on character_id.
+-- ============================================================
+
+-- ANSWER:
+SELECT f.firm_name,
+       f.registration_year  AS firm_founded,
+       f.firm_type,
+       f.capital_at_start,
+       b.full_name,
+       b.member_type,
+       b.registration_year  AS bse_registered
+FROM firms f
+JOIN bse_members b
+    ON f.character_id = b.character_id
+WHERE f.character_id = 1
+  AND f.is_real      = TRUE;
+
+
+-- ============================================================
+-- QUESTION 15 (Hard)
+-- Story: "A rival broker claims he made more total profit
+--         than Harshad in 1985. Find the top 3 broker IDs
+--         by total profit in 1985 — and see where
+--         Harshad ranks."
+--
+-- Task: GROUP BY broker_id for trade_year = 1985,
+--       SUM(profit_loss), ORDER BY total DESC, LIMIT 3.
+--
+-- Hint: Use GROUP BY broker_id, ORDER BY DESC, LIMIT 3.
+-- ============================================================
+
+-- ANSWER:
+SELECT broker_id,
+       COUNT(*)         AS total_trades,
+       SUM(profit_loss) AS total_profit
+FROM stock_trades_early
+WHERE trade_year = 1985
+GROUP BY broker_id
+ORDER BY total_profit DESC
+LIMIT 3;
+
+
+-- ============================================================
+-- QUESTION 16 (Chapter Boss — Hard)
+-- Story: "You have traced Harshad's full Chapter 2 arc.
+--         Now build his complete BSE profile — his member
+--         details, his real firm, his mentor, and his
+--         total profit earned in this chapter."
+--
+-- Task: Write a query that shows:
+--         - full_name, member_type, registration_year
+--           (from bse_members where character_id = 1)
+--         - firm_name (from firms — real, character_id = 1,
+--           earliest registration_year)
+--         - mentor_name (from mentors — real, character_id = 1)
+--         - total_profit (from stock_trades_early
+--           where is_harshad = TRUE)
+--
+-- Hint: Use multiple JOINs with subqueries.
+-- ============================================================
+
+-- ANSWER:
+SELECT
+    b.full_name,
+    b.member_type,
+    b.registration_year          AS bse_joined,
+    f.firm_name                  AS first_firm,
+    m.mentor_name                AS real_mentor,
+    p.total_profit
+FROM bse_members b
+
+JOIN firms f
+    ON f.character_id = b.character_id
+    AND f.is_real     = TRUE
+    AND f.registration_year = (
+        SELECT MIN(registration_year)
+        FROM firms
+        WHERE character_id = 1
+          AND is_real       = TRUE
+    )
+
+JOIN mentors m
+    ON m.character_id = b.character_id
+    AND m.is_real     = TRUE
+    AND m.year_met    = (
+        SELECT MIN(year_met)
+        FROM mentors
+        WHERE character_id = 1
+          AND is_real       = TRUE
+    )
+
+JOIN (
+    SELECT SUM(profit_loss) AS total_profit
+    FROM stock_trades_early
+    WHERE is_harshad = TRUE
+) p ON 1 = 1
+
+WHERE b.character_id = 1;
+
+-- ============================================================
+-- CHAPTER 3 QUESTIONS: "The Money Machine" (1986 - 1991)
+-- ============================================================
+-- SQL Concepts Covered: SELECT, WHERE, JOIN, LEFT JOIN,
+--                       GROUP BY, HAVING, CASE WHEN,
+--                       SUM, AVG, ROUND, Subqueries
+-- ============================================================
+
+
+-- ============================================================
+-- QUESTION 1 (Intro Level)
+-- Story: "The scam was not built overnight. It was built
+--         on a network of banks. Find all the banks that
+--         were actually involved in Harshad's scheme."
+--
+-- Task: Find all banks where was_involved = TRUE.
+--
+-- Hint: Simple SELECT WHERE.
+-- ============================================================
+
+-- ANSWER:
+SELECT bank_id, bank_name, bank_type, city, involvement
+FROM banks
+WHERE was_involved = TRUE;
+
+
+-- ============================================================
+-- QUESTION 2 (Intro Level)
+-- Story: "Not all banks were equal in this game. Some were
+--         public, some were foreign. How many involved
+--         banks were there of each bank_type?"
+--
+-- Task: GROUP BY bank_type where was_involved = TRUE,
+--       COUNT each type.
+--
+-- Hint: GROUP BY + COUNT.
+-- ============================================================
+
+-- ANSWER:
+SELECT bank_type,
+       COUNT(*) AS total_involved_banks
+FROM banks
+WHERE was_involved = TRUE
+GROUP BY bank_type
+ORDER BY total_involved_banks DESC;
+
+
+-- ============================================================
+-- QUESTION 3 (Easy)
+-- Story: "The Bank Receipt — the weapon of the scam.
+--         Harshad used fake BRs to siphon money.
+--         Find ALL fake bank receipts in the system."
+--
+-- Task: Find all records from bank_receipts
+--       where is_fake = TRUE.
+--
+-- Hint: WHERE is_fake = TRUE.
+-- ============================================================
+
+-- ANSWER:
+SELECT br_id, br_number, issued_date,
+       amount_crore, backed_by, status
+FROM bank_receipts
+WHERE is_fake = TRUE
+ORDER BY issued_date;
+
+
+-- ============================================================
+-- QUESTION 4 (Easy)
+-- Story: "How much total money did Harshad steal through
+--         fake Bank Receipts? Add up all the fake BR
+--         amounts — this is the number that shocked India."
+--
+-- Task: Find SUM of amount_crore where is_fake = TRUE.
+--
+-- Hint: SUM() with WHERE filter.
+-- ============================================================
+
+-- ANSWER:
+SELECT COUNT(*)             AS total_fake_brs,
+       SUM(amount_crore)    AS total_amount_crore,
+       AVG(amount_crore)    AS avg_per_br
+FROM bank_receipts
+WHERE is_fake = TRUE;
+
+
+-- ============================================================
+-- QUESTION 5 (Easy)
+-- Story: "National Housing Bank was the biggest weapon.
+--         Find all fake BRs that were issued specifically
+--         by NHB — bank_id 62."
+--
+-- Task: Find fake BRs from bank_id = 62,
+--       ordered by issued_date.
+--
+-- Hint: WHERE is_fake = TRUE AND bank_id = 62.
+-- ============================================================
+
+-- ANSWER:
+SELECT br_number, issued_date, amount_crore, backed_by
+FROM bank_receipts
+WHERE is_fake   = TRUE
+  AND bank_id   = 62
+ORDER BY issued_date;
+
+
+-- ============================================================
+-- QUESTION 6 (Easy)
+-- Story: "Ready Forward deals were the vehicle. All the
+--         fraudulent RF deals went into one place —
+--         the stock market. Find all fraudulent RF deals
+--         and where the money was diverted."
+--
+-- Task: Find all rf_deals where is_fraudulent = TRUE,
+--       show deal_amount_cr and diverted_to.
+--
+-- Hint: WHERE is_fraudulent = TRUE.
+-- ============================================================
+
+-- ANSWER:
+SELECT deal_id, deal_date, deal_amount_cr,
+       securities_used, diverted_to
+FROM rf_deals
+WHERE is_fraudulent = TRUE
+ORDER BY deal_date;
+
+
+-- ============================================================
+-- QUESTION 7 (Medium)
+-- Story: "The fraud grew bigger every month. Show the
+--         total fraudulent RF deal amount grouped by
+--         where the money was diverted — which stocks
+--         got the most fuel?"
+--
+-- Task: GROUP BY diverted_to for is_fraudulent = TRUE,
+--       SUM deal_amount_cr, ORDER BY total DESC.
+--
+-- Hint: GROUP BY diverted_to + SUM.
+-- ============================================================
+
+-- ANSWER:
+SELECT diverted_to,
+       COUNT(*)              AS total_deals,
+       SUM(deal_amount_cr)   AS total_diverted_crore
+FROM rf_deals
+WHERE is_fraudulent = TRUE
+GROUP BY diverted_to
+ORDER BY total_diverted_crore DESC;
+
+
+-- ============================================================
+-- QUESTION 8 (Medium)
+-- Story: "Harshad's real associates were the nerve center
+--         of his operation. Find all his real associates
+--         and what role they played."
+--
+-- Task: Find all associates where character_id = 1
+--       and is_real = TRUE, ordered by year_connected.
+--
+-- Hint: WHERE + ORDER BY.
+-- ============================================================
+
+-- ANSWER:
+SELECT associate_name, role, organisation, year_connected
+FROM associates
+WHERE character_id = 1
+  AND is_real      = TRUE
+ORDER BY year_connected;
+
+
+-- ============================================================
+-- QUESTION 9 (Medium)
+-- Story: "Harshad used CASE WHEN to categorize the banks
+--         in his mind — big guns vs small pawns.
+--         Classify each involved bank as 'Major Player'
+--         if their bank_type is Public or Foreign,
+--         else 'Minor Player'."
+--
+-- Task: Use CASE WHEN to add a classification column
+--       for all banks where was_involved = TRUE.
+--
+-- Hint: CASE WHEN bank_type IN (...) THEN ... ELSE ... END
+-- ============================================================
+
+-- ANSWER:
+SELECT bank_name,
+       bank_type,
+       city,
+       CASE
+           WHEN bank_type IN ('Public', 'Foreign')
+               THEN 'Major Player'
+           ELSE 'Minor Player'
+       END AS player_classification
+FROM banks
+WHERE was_involved = TRUE
+ORDER BY player_classification;
+
+
+-- ============================================================
+-- QUESTION 10 (Medium)
+-- Story: "Among the real assets Harshad acquired, what
+--         was his total estimated wealth from real
+--         assets only? And what was his average
+--         asset value?"
+--
+-- Task: From lifestyle where is_real = TRUE
+--       and character_id = 1,
+--       find COUNT, SUM and ROUND(AVG) of estimated_value.
+--
+-- Hint: Use COUNT, SUM, ROUND(AVG(...), 2).
+-- ============================================================
+
+-- ANSWER:
+SELECT COUNT(*)                         AS total_real_assets,
+       SUM(estimated_value)             AS total_wealth,
+       ROUND(AVG(estimated_value), 2)   AS avg_asset_value
+FROM lifestyle
+WHERE character_id = 1
+  AND is_real      = TRUE;
+
+
+-- ============================================================
+-- QUESTION 11 (Medium)
+-- Story: "Harshad's lifestyle was split across asset types.
+--         Group his REAL assets by asset_type and find
+--         the total value of each type."
+--
+-- Task: GROUP BY asset_type for character_id = 1
+--       and is_real = TRUE, SUM estimated_value.
+--
+-- Hint: GROUP BY asset_type + SUM.
+-- ============================================================
+
+-- ANSWER:
+SELECT asset_type,
+       COUNT(*)              AS total_items,
+       SUM(estimated_value)  AS total_value
+FROM lifestyle
+WHERE character_id = 1
+  AND is_real      = TRUE
+GROUP BY asset_type
+ORDER BY total_value DESC;
+
+
+-- ============================================================
+-- QUESTION 12 (Hard)
+-- Story: "Join the fraudulent RF deals with the banks
+--         table to see which bank was responsible for
+--         the most fraudulent money flow."
+--
+-- Task: JOIN rf_deals and banks on bank_id,
+--       WHERE is_fraudulent = TRUE,
+--       GROUP BY bank_name,
+--       SUM deal_amount_cr ORDER BY total DESC.
+--
+-- Hint: JOIN + GROUP BY + SUM.
+-- ============================================================
+
+-- ANSWER:
+SELECT b.bank_name,
+       b.bank_type,
+       COUNT(*)              AS total_deals,
+       SUM(r.deal_amount_cr) AS total_amount_crore
+FROM rf_deals r
+JOIN banks b
+    ON r.bank_id = b.bank_id
+WHERE r.is_fraudulent = TRUE
+GROUP BY b.bank_name, b.bank_type
+ORDER BY total_amount_crore DESC;
+
+
+-- ============================================================
+-- QUESTION 13 (Hard)
+-- Story: "Some banks had both fake BRs AND fraudulent RF
+--         deals. Find banks that appear in BOTH
+--         bank_receipts (is_fake=TRUE) AND
+--         rf_deals (is_fraudulent=TRUE)."
+--
+-- Task: Find bank_ids that exist in both tables
+--       using a subquery with IN.
+--
+-- Hint: WHERE bank_id IN (SELECT bank_id FROM ... WHERE ...)
+-- ============================================================
+
+-- ANSWER:
+SELECT b.bank_name,
+       b.bank_type,
+       b.city
+FROM banks b
+WHERE b.bank_id IN (
+        SELECT bank_id
+        FROM bank_receipts
+        WHERE is_fake = TRUE
+    )
+  AND b.bank_id IN (
+        SELECT bank_id
+        FROM rf_deals
+        WHERE is_fraudulent = TRUE
+    );
+
+
+-- ============================================================
+-- QUESTION 14 (Hard)
+-- Story: "LEFT JOIN the banks to their fake BRs.
+--         Some involved banks have no fake BRs on record
+--         — they may have destroyed evidence.
+--         Find involved banks with NO fake BR records."
+--
+-- Task: LEFT JOIN banks with bank_receipts (is_fake=TRUE)
+--       on bank_id, WHERE was_involved = TRUE
+--       AND br_id IS NULL.
+--
+-- Hint: LEFT JOIN + IS NULL to find missing matches.
+-- ============================================================
+
+-- ANSWER:
+SELECT b.bank_name,
+       b.bank_type,
+       b.involvement
+FROM banks b
+LEFT JOIN bank_receipts br
+    ON b.bank_id  = br.bank_id
+    AND br.is_fake = TRUE
+WHERE b.was_involved = TRUE
+  AND br.br_id       IS NULL;
+
+
+-- ============================================================
+-- QUESTION 15 (Hard)
+-- Story: "Which bank contributed more than ₹500 crore
+--         in total fake BR amounts? These are the banks
+--         that truly powered the scam."
+--
+-- Task: JOIN banks and bank_receipts where is_fake = TRUE,
+--       GROUP BY bank_name,
+--       HAVING SUM(amount_crore) > 500.
+--
+-- Hint: JOIN + GROUP BY + HAVING.
+-- ============================================================
+
+-- ANSWER:
+SELECT b.bank_name,
+       SUM(br.amount_crore)  AS total_fake_br_amount
+FROM banks b
+JOIN bank_receipts br
+    ON b.bank_id  = br.bank_id
+WHERE br.is_fake  = TRUE
+GROUP BY b.bank_name
+HAVING SUM(br.amount_crore) > 500
+ORDER BY total_fake_br_amount DESC;
+
+
+-- ============================================================
+-- QUESTION 16 (Chapter Boss — Hard)
+-- Story: "You have now cracked the Money Machine.
+--         Build the full fraud summary — for each
+--         involved bank show: bank name, total fake BRs,
+--         total fake BR amount, total fraudulent RF deals,
+--         total RF amount, and classify each bank using
+--         CASE WHEN as 'Primary Conspirator' if total
+--         combined amount > 500 crore, else 'Secondary'."
+--
+-- Task: JOIN banks, bank_receipts, rf_deals,
+--       GROUP BY bank, SUM both amounts,
+--       CASE WHEN combined total > 500 THEN ... END.
+--
+-- Hint: Use two JOINs + GROUP BY + CASE WHEN on SUM.
+-- ============================================================
+
+-- ANSWER:
+SELECT
+    b.bank_name,
+    b.bank_type,
+    COUNT(DISTINCT br.br_id)        AS total_fake_brs,
+    COALESCE(SUM(DISTINCT br.amount_crore), 0)  AS fake_br_total,
+    COUNT(DISTINCT rf.deal_id)      AS total_rf_deals,
+    COALESCE(SUM(DISTINCT rf.deal_amount_cr), 0) AS rf_deal_total,
+    ROUND(
+        COALESCE(SUM(DISTINCT br.amount_crore), 0) +
+        COALESCE(SUM(DISTINCT rf.deal_amount_cr), 0)
+    , 2)                            AS combined_total_crore,
+    CASE
+        WHEN (
+            COALESCE(SUM(DISTINCT br.amount_crore), 0) +
+            COALESCE(SUM(DISTINCT rf.deal_amount_cr), 0)
+        ) > 500
+            THEN 'Primary Conspirator'
+        ELSE 'Secondary Participant'
+    END                             AS bank_role
+FROM banks b
+LEFT JOIN bank_receipts br
+    ON b.bank_id  = br.bank_id
+    AND br.is_fake = TRUE
+LEFT JOIN rf_deals rf
+    ON b.bank_id      = rf.bank_id
+    AND rf.is_fraudulent = TRUE
+WHERE b.was_involved = TRUE
+GROUP BY b.bank_name, b.bank_type
+ORDER BY combined_total_crore DESC;
+
+-- ============================================================
+-- CHAPTER 4: "The Big Bull" — PUZZLE QUESTIONS
+-- ============================================================
+
+
+-- ============================================================
+-- LEVEL 1 — "The Floor Whispers"
+-- (Basic SELECT, WHERE, ORDER BY)
+-- ============================================================
+
+-- Q1.
+-- The year is 1991. You just walked onto Dalal Street.
+-- Everyone is talking about one stock that's flying.
+-- Find all ACC Cement price records and order them
+-- from earliest to latest date.
+-- What you should see: the rocket journey from ₹200 → ₹9000
+
+SELECT *
+FROM stock_prices
+WHERE stock_name = 'ACC Cement'
+ORDER BY price_date ASC;
+
+
+-- Q2.
+-- A journalist stops you and asks:
+-- "Which months was the Sensex actually in a bull run?"
+-- List all sensex records where is_bull_run is TRUE,
+-- showing month, year and sensex_value.
+
+SELECT record_month, record_year, sensex_value
+FROM sensex_index
+WHERE is_bull_run = TRUE
+ORDER BY record_year, sensex_value ASC;
+
+
+-- Q3.
+-- You want to know the peak of the madness.
+-- Find the single highest closing price ACC Cement ever hit.
+
+SELECT MAX(close_price) AS peak_acc_price
+FROM stock_prices
+WHERE stock_name = 'ACC Cement';
+
+
+-- Q4.
+-- A retail investor grabs your collar and yells:
+-- "I lost everything! How many people like me are in this database?"
+-- Count how many retail investors recorded a loss (profit_loss < 0).
+
+SELECT COUNT(*) AS investors_who_lost
+FROM investor_activity
+WHERE is_retail = TRUE
+AND profit_loss < 0;
+
+
+-- ============================================================
+-- LEVEL 2 — "Following the Money"
+-- (Aggregations, GROUP BY, HAVING)
+-- ============================================================
+
+-- Q5.
+-- The market is roaring. You want to understand
+-- which stocks retail investors piled into the most.
+-- Show each stock_bought and the total amount_invested
+-- across all retail investors. Order by total invested DESC.
+
+SELECT
+    stock_bought,
+    SUM(amount_invested)    AS total_invested,
+    COUNT(*)                AS investor_count
+FROM investor_activity
+WHERE is_retail = TRUE
+GROUP BY stock_bought
+ORDER BY total_invested DESC;
+
+
+-- Q6.
+-- How much did the Sensex actually grow during the bull run?
+-- Calculate the difference between the highest and lowest
+-- sensex_value where is_bull_run = TRUE.
+-- This is the size of Harshad's manufactured boom.
+
+SELECT
+    MIN(sensex_value)                       AS sensex_start,
+    MAX(sensex_value)                       AS sensex_peak,
+    MAX(sensex_value) - MIN(sensex_value)   AS total_bull_gain
+FROM sensex_index
+WHERE is_bull_run = TRUE;
+
+
+-- Q7.
+-- The press is writing about Harshad.
+-- Show each publication and how many articles they published,
+-- but only show publications that published MORE than 1 article.
+-- Order by article count DESC.
+
+SELECT
+    publication,
+    COUNT(*)    AS article_count,
+    SUM(CASE WHEN tone = 'Positive' THEN 1 ELSE 0 END) AS positive_count,
+    SUM(CASE WHEN tone = 'Negative' THEN 1 ELSE 0 END) AS negative_count
+FROM media_coverage
+GROUP BY publication
+HAVING COUNT(*) > 1
+ORDER BY article_count DESC;
+
+
+-- ============================================================
+-- LEVEL 3 — "The Web Tightens"
+-- (JOINs across tables)
+-- ============================================================
+
+-- Q8.
+-- The CBI officer hands you a file.
+-- It contains all stocks bought by retail investors
+-- AFTER the Sensex had already started crashing (after April 1992).
+-- These are the people who bought at the peak — the real victims.
+-- Find their names, stock bought, entry date and loss amount.
+
+SELECT
+    investor_name,
+    stock_bought,
+    entry_date,
+    amount_invested,
+    profit_loss
+FROM investor_activity
+WHERE entry_date > '1992-04-23'
+AND profit_loss < 0
+ORDER BY profit_loss ASC;
+
+
+-- Q9.
+-- The landmark article that broke everything was published
+-- on April 23 1992 by Sucheta Dalal.
+-- On that exact same date, what happened to ACC Cement stock?
+-- JOIN media_coverage and stock_prices on the same publish_date = price_date
+-- to show the article title alongside the stock crash numbers.
+
+SELECT
+    mc.article_title,
+    mc.journalist,
+    sp.stock_name,
+    sp.open_price,
+    sp.close_price,
+    sp.close_price - sp.open_price AS price_drop
+FROM media_coverage mc
+JOIN stock_prices sp
+    ON mc.publish_date = sp.price_date
+WHERE mc.is_landmark = TRUE
+AND sp.stock_name = 'ACC Cement'
+ORDER BY mc.publish_date;
+
+
+-- Q10.
+-- A political analyst tells you:
+-- "Not all meetings with politicians were real.
+--  Harshad only confirmed 2 meetings."
+-- List only the CONFIRMED political meetings along with
+-- the politician name, their designation and the meeting outcome.
+
+SELECT
+    politician_name,
+    designation,
+    meeting_year,
+    meeting_city,
+    purpose,
+    outcome
+FROM political_meetings
+WHERE is_confirmed = TRUE
+ORDER BY meeting_year;
+
+
+-- ============================================================
+-- LEVEL 4 — "Connecting the Conspiracy"
+-- (Subqueries, CTEs, Window Functions)
+-- ============================================================
+
+-- Q11.
+-- The JPC committee wants a month-by-month picture
+-- of the Sensex during the bull run, showing each month's
+-- RUNNING TOTAL gain from the start of the bull run.
+-- Use a window function to calculate cumulative monthly_change.
+
+SELECT
+    record_month,
+    record_year,
+    sensex_value,
+    monthly_change,
+    SUM(monthly_change) OVER (
+        ORDER BY record_year,
+        CASE record_month
+            WHEN 'January'   THEN 1
+            WHEN 'February'  THEN 2
+            WHEN 'March'     THEN 3
+            WHEN 'April'     THEN 4
+            WHEN 'May'       THEN 5
+            WHEN 'June'      THEN 6
+            WHEN 'July'      THEN 7
+            WHEN 'August'    THEN 8
+            WHEN 'September' THEN 9
+            WHEN 'October'   THEN 10
+            WHEN 'November'  THEN 11
+            ELSE 12
+        END
+    ) AS cumulative_gain
+FROM sensex_index
+WHERE is_bull_run = TRUE
+ORDER BY record_year,
+    CASE record_month
+        WHEN 'January'   THEN 1
+        WHEN 'February'  THEN 2
+        WHEN 'March'     THEN 3
+        WHEN 'April'     THEN 4
+        WHEN 'May'       THEN 5
+        WHEN 'June'      THEN 6
+        WHEN 'July'      THEN 7
+        WHEN 'August'    THEN 8
+        WHEN 'September' THEN 9
+        WHEN 'October'   THEN 10
+        WHEN 'November'  THEN 11
+        ELSE 12
+    END;
+
+
+-- Q12.
+-- The investigator wants to rank all stocks by
+-- total money retail investors poured into them.
+-- Use RANK() to assign a rank and also show
+-- what percentage of total investment each stock captured.
+
+WITH stock_totals AS (
+    SELECT
+        stock_bought,
+        SUM(amount_invested) AS total_invested
+    FROM investor_activity
+    WHERE is_retail = TRUE
+    GROUP BY stock_bought
+),
+grand_total AS (
+    SELECT SUM(total_invested) AS market_total
+    FROM stock_totals
+)
+SELECT
+    st.stock_bought,
+    st.total_invested,
+    RANK() OVER (ORDER BY st.total_invested DESC)       AS investment_rank,
+    ROUND(
+        st.total_invested * 100.0 / gt.market_total, 2
+    )                                                   AS pct_of_market
+FROM stock_totals st
+CROSS JOIN grand_total gt
+ORDER BY investment_rank;
+
+
+-- Q13.
+-- Find the SINGLE WORST DAY for ACC Cement —
+-- the date with the largest single-day price drop.
+-- Show the date, open, close, and the drop amount.
+-- Use a subquery to find the max drop first.
+
+SELECT
+    price_date,
+    open_price,
+    close_price,
+    open_price - close_price AS price_drop
+FROM stock_prices
+WHERE stock_name = 'ACC Cement'
+AND (open_price - close_price) = (
+    SELECT MAX(open_price - close_price)
+    FROM stock_prices
+    WHERE stock_name = 'ACC Cement'
+);
+
+
+-- ============================================================
+-- LEVEL 5 — "The Final Reckoning"
+-- (Multi-table CTEs, the story's verdict query)
+-- ============================================================
+
+-- Q14.
+-- THE VERDICT QUERY.
+-- Build a complete picture of the April 23 1992 crash day:
+-- - The article that exposed Harshad (media_coverage)
+-- - The ACC stock price on that day (stock_prices)
+-- - The Sensex in April 1992 (sensex_index)
+-- - The number of retail investors who entered AFTER the crash
+--   and still lost money (investor_activity)
+-- Combine all four as a single summary report
+-- using CTEs and cross joins.
+
+WITH breaking_article AS (
+    SELECT
+        article_title,
+        journalist,
+        publish_date
+    FROM media_coverage
+    WHERE journalist = 'Sucheta Dalal'
+    AND is_landmark   = TRUE
+    ORDER BY publish_date
+    LIMIT 1
+),
+acc_crash AS (
+    SELECT
+        price_date,
+        open_price,
+        close_price,
+        open_price - close_price AS crash_drop,
+        volume                   AS panic_volume
+    FROM stock_prices
+    WHERE stock_name = 'ACC Cement'
+    AND price_date   = '1992-04-23'
+),
+sensex_crash AS (
+    SELECT
+        sensex_value,
+        monthly_change AS sensex_drop
+    FROM sensex_index
+    WHERE record_month = 'April'
+    AND record_year    = 1992
+),
+victims AS (
+    SELECT COUNT(*) AS retail_victims_after_crash
+    FROM investor_activity
+    WHERE entry_date  > '1992-04-23'
+    AND profit_loss  < 0
+    AND is_retail    = TRUE
+)
+SELECT
+    ba.article_title                        AS article_that_broke_it,
+    ba.journalist                           AS written_by,
+    ba.publish_date                         AS exposed_on,
+    ac.open_price                           AS acc_open_that_day,
+    ac.close_price                          AS acc_close_that_day,
+    ac.crash_drop                           AS acc_drop_in_one_day,
+    ac.panic_volume                         AS panic_trades,
+    sc.sensex_value                         AS sensex_in_april,
+    sc.sensex_drop                          AS sensex_monthly_fall,
+    v.retail_victims_after_crash            AS people_still_buying_into_collapse
+FROM breaking_article   ba
+CROSS JOIN acc_crash    ac
+CROSS JOIN sensex_crash sc
+CROSS JOIN victims      v;
+
+
+-- ============================================================
+-- BONUS — "The Ghost in the Data"
+-- (The question the game never asks but the player must find)
+-- ============================================================
+
+-- BONUS Q.
+-- Harshad always claimed the REAL culprit was the system —
+-- the bankers, the politicians, the brokers who all knew.
+-- Find all political meetings marked is_confirmed = FALSE
+-- where the purpose mentions 'protection' or 'political'
+-- AND find all media articles marked is_landmark = TRUE
+-- where the tone is 'Neutral' — the ones that didn't
+-- take a side.
+-- These are the grey zones of the story.
+
+SELECT
+    'Political Meeting' AS record_type,
+    politician_name     AS name,
+    purpose             AS detail,
+    'Unconfirmed'       AS status
+FROM political_meetings
+WHERE is_confirmed = FALSE
+AND (
+    purpose ILIKE '%protection%'
+    OR purpose ILIKE '%political%'
+)
+
+UNION ALL
+
+SELECT
+    'Media Article'     AS record_type,
+    journalist          AS name,
+    article_title       AS detail,
+    'Neutral Tone'      AS status
+FROM media_coverage
+WHERE is_landmark = TRUE
+AND tone = 'Neutral'
+
+ORDER BY record_type, name;
+
+-- ============================================================
+-- CHAPTER 5: "The Crash" — PUZZLE QUESTIONS
+-- ============================================================
+
+
+-- ============================================================
+-- LEVEL 1 — "The Morning After"
+-- (Basic SELECT, WHERE, ORDER BY)
+-- ============================================================
+
+-- Q1.
+-- April 23, 1992. The article is out.
+-- CBI is moving fast. Find all REAL raids
+-- ordered by raid_date — show what happened
+-- in the first 30 days after the crash.
+
+SELECT
+    raid_date,
+    location,
+    target_name,
+    outcome
+FROM cbi_raids
+WHERE is_real = TRUE
+ORDER BY raid_date ASC;
+
+
+-- Q2.
+-- The investor in front of you is crying.
+-- "Which day was the absolute worst for the market?"
+-- Find the single black day with the highest pct_fall
+-- from market_crash_impact.
+
+SELECT
+    impact_date,
+    sensex_open,
+    sensex_close,
+    points_fallen,
+    pct_fall,
+    retail_panic_level
+FROM market_crash_impact
+WHERE is_black_day = TRUE
+ORDER BY pct_fall DESC
+LIMIT 1;
+
+
+-- Q3.
+-- How many banks suffered REAL losses
+-- that were NOT recoverable?
+-- Count them from bank_losses.
+
+SELECT COUNT(*) AS unrecoverable_bank_losses
+FROM bank_losses
+WHERE is_real = TRUE
+AND recovery_possible = FALSE;
+
+
+-- Q4.
+-- List all real public reactions in order —
+-- show the story of those 10 weeks
+-- from April 23 to July 1992.
+
+SELECT
+    reaction_date,
+    reaction_type,
+    source,
+    description,
+    sentiment
+FROM public_reaction
+WHERE is_documented = TRUE
+ORDER BY reaction_date ASC;
+
+
+-- ============================================================
+-- LEVEL 2 — "Counting the Damage"
+-- (Aggregations, GROUP BY, HAVING)
+-- ============================================================
+
+-- Q5.
+-- The RBI wants a total damage report.
+-- Sum up all REAL bank losses in crores.
+-- Show each bank_id with their total loss
+-- and order by worst loss first.
+
+SELECT
+    bank_id,
+    SUM(loss_amount_cr)     AS total_loss_cr,
+    COUNT(*)                AS loss_entries,
+    BOOL_OR(recovery_possible) AS any_recovery_possible
+FROM bank_losses
+WHERE is_real = TRUE
+GROUP BY bank_id
+ORDER BY total_loss_cr DESC;
+
+
+-- Q6.
+-- How did public sentiment shift week by week?
+-- Group public_reaction by sentiment type
+-- and count how many documented reactions
+-- fell into each sentiment category.
+
+SELECT
+    sentiment,
+    COUNT(*) AS reaction_count
+FROM public_reaction
+WHERE is_documented = TRUE
+GROUP BY sentiment
+ORDER BY reaction_count DESC;
+
+
+-- Q7.
+-- The CBI wants to know which raids actually
+-- seized documents vs those that found cash.
+-- From real raids only, group by whether
+-- documents_seized is TRUE or FALSE
+-- and show the total cash_seized_cr per group.
+
+SELECT
+    documents_seized,
+    COUNT(*)                AS raid_count,
+    SUM(cash_seized_cr)     AS total_cash_seized_cr
+FROM cbi_raids
+WHERE is_real = TRUE
+GROUP BY documents_seized;
+
+
+-- ============================================================
+-- LEVEL 3 — "The Evidence Chain"
+-- (JOINs across tables)
+-- ============================================================
+
+-- Q8.
+-- The court needs a joined evidence file.
+-- For every REAL CBI raid, show the raid details
+-- alongside ALL assets seized in that raid.
+-- JOIN cbi_raids and seized_assets on raid_id.
+
+SELECT
+    cr.raid_date,
+    cr.location,
+    cr.target_name,
+    sa.asset_type,
+    sa.asset_description,
+    sa.estimated_value,
+    sa.current_status
+FROM cbi_raids cr
+JOIN seized_assets sa
+    ON cr.raid_id = sa.raid_id
+WHERE cr.is_real  = TRUE
+AND   sa.is_real  = TRUE
+ORDER BY cr.raid_date, sa.estimated_value DESC;
+
+
+-- Q9.
+-- The JPC committee wants to correlate
+-- the crash days with documented public reactions.
+-- JOIN market_crash_impact and public_reaction
+-- where the dates match — show what happened
+-- on the streets the same day the market fell.
+
+SELECT
+    mci.impact_date,
+    mci.points_fallen,
+    mci.pct_fall,
+    mci.retail_panic_level,
+    pr.reaction_type,
+    pr.source,
+    pr.sentiment
+FROM market_crash_impact mci
+JOIN public_reaction pr
+    ON mci.impact_date = pr.reaction_date
+WHERE mci.is_black_day   = TRUE
+AND   pr.is_documented   = TRUE
+ORDER BY mci.impact_date;
+
+
+-- Q10.
+-- Connect bank_losses to the banks table from Chapter 3.
+-- Show each real bank's name, type and
+-- their total loss amount — only for banks
+-- that suffered real losses.
+
+SELECT
+    b.bank_name,
+    b.bank_type,
+    SUM(bl.loss_amount_cr)  AS total_loss_cr,
+    BOOL_OR(bl.recovery_possible) AS recovery_possible
+FROM bank_losses bl
+JOIN banks b
+    ON bl.bank_id = b.bank_id
+WHERE bl.is_real = TRUE
+GROUP BY b.bank_name, b.bank_type
+ORDER BY total_loss_cr DESC;
+
+
+-- ============================================================
+-- LEVEL 4 — "The Forensic Report"
+-- (Subqueries, CTEs, Window Functions)
+-- ============================================================
+
+-- Q11.
+-- Build a running total of market damage day by day.
+-- Use a window function on market_crash_impact
+-- to show cumulative points fallen across all black days
+-- ordered by date.
+
+SELECT
+    impact_date,
+    sensex_close,
+    points_fallen,
+    SUM(points_fallen) OVER (
+        ORDER BY impact_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS cumulative_points_lost,
+    ROUND(
+        SUM(points_fallen) OVER (
+            ORDER BY impact_date
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) * 100.0 / FIRST_VALUE(sensex_open) OVER (
+            ORDER BY impact_date
+        ), 2
+    ) AS cumulative_pct_lost
+FROM market_crash_impact
+WHERE is_black_day = TRUE
+ORDER BY impact_date;
+
+
+-- Q12.
+-- The CBI lawyer needs to rank the banks
+-- by how much they lost — and flag which ones
+-- can never recover the money.
+-- Use RANK() and a CASE label.
+
+WITH bank_damage AS (
+    SELECT
+        b.bank_name,
+        SUM(bl.loss_amount_cr)      AS total_loss_cr,
+        BOOL_OR(bl.recovery_possible) AS any_recovery
+    FROM bank_losses bl
+    JOIN banks b ON bl.bank_id = b.bank_id
+    WHERE bl.is_real = TRUE
+    GROUP BY b.bank_name
+)
+SELECT
+    bank_name,
+    total_loss_cr,
+    RANK() OVER (ORDER BY total_loss_cr DESC) AS damage_rank,
+    CASE WHEN any_recovery = FALSE
+         THEN 'TOTAL LOSS — unrecoverable'
+         ELSE 'Partial recovery possible'
+    END AS recovery_verdict
+FROM bank_damage
+ORDER BY damage_rank;
+
+
+-- Q13.
+-- Find all seized assets whose estimated_value
+-- is ABOVE the average estimated value
+-- of all real seized assets.
+-- These are the crown jewels the court froze.
+
+SELECT
+    sa.asset_type,
+    sa.asset_description,
+    sa.estimated_value,
+    sa.current_status
+FROM seized_assets sa
+WHERE sa.is_real = TRUE
+AND sa.estimated_value > (
+    SELECT AVG(estimated_value)
+    FROM seized_assets
+    WHERE is_real = TRUE
+)
+ORDER BY sa.estimated_value DESC;
+
+
+-- ============================================================
+-- LEVEL 5 — "The Final Reckoning"
+-- (Multi-table CTE verdict query)
+-- ============================================================
+
+-- Q14.
+-- THE CRASH VERDICT QUERY.
+-- Build a complete collapse summary:
+-- - Total real bank losses (bank_losses)
+-- - Total seized asset value (seized_assets)
+-- - Worst single crash day drop (market_crash_impact)
+-- - First documented public reaction (public_reaction)
+-- - The arrest raid record (cbi_raids)
+-- Five angles. One picture of the devastation.
+
+WITH total_bank_loss AS (
+    SELECT SUM(loss_amount_cr) AS total_cr
+    FROM bank_losses
+    WHERE is_real = TRUE
+),
+total_seized AS (
+    SELECT SUM(estimated_value) AS total_value
+    FROM seized_assets
+    WHERE is_real = TRUE
+),
+worst_day AS (
+    SELECT
+        impact_date,
+        points_fallen,
+        pct_fall
+    FROM market_crash_impact
+    WHERE is_black_day = TRUE
+    ORDER BY pct_fall DESC
+    LIMIT 1
+),
+first_reaction AS (
+    SELECT
+        reaction_date,
+        source,
+        description
+    FROM public_reaction
+    WHERE is_documented = TRUE
+    ORDER BY reaction_date
+    LIMIT 1
+),
+arrest_raid AS (
+    SELECT
+        raid_date,
+        location,
+        outcome
+    FROM cbi_raids
+    WHERE is_real = TRUE
+    AND raid_type = 'Arrest'
+    LIMIT 1
+)
+SELECT
+    tbl.total_cr                    AS total_bank_loss_cr,
+    ts.total_value                  AS total_assets_frozen,
+    wd.impact_date                  AS worst_crash_date,
+    wd.points_fallen                AS worst_day_points_drop,
+    wd.pct_fall                     AS worst_day_pct_drop,
+    fr.reaction_date                AS first_public_reaction_date,
+    fr.source                       AS who_reacted_first,
+    ar.raid_date                    AS harshad_arrested_on,
+    ar.location                     AS arrested_at,
+    ar.outcome                      AS arrest_outcome
+FROM total_bank_loss    tbl
+CROSS JOIN total_seized ts
+CROSS JOIN worst_day    wd
+CROSS JOIN first_reaction fr
+CROSS JOIN arrest_raid  ar;
+
+
+-- ============================================================
+-- BONUS — "The Bombshell Press Conference"
+-- (The moment Harshad named the Prime Minister)
+-- ============================================================
+
+-- BONUS Q.
+-- On May 10 1992, Harshad held a press conference
+-- and claimed PM Narasimha Rao told him to boost the market.
+-- Find that public reaction record.
+-- Then cross it with the political_meetings table
+-- from Chapter 4 to show what the official record says
+-- about that same claim.
+-- Two versions of the same truth.
+
+SELECT
+    'Harshad Press Conference'      AS source_type,
+    pr.reaction_date                AS event_date,
+    pr.source                       AS who_said_it,
+    pr.description                  AS what_was_claimed,
+    pr.sentiment                    AS tone
+FROM public_reaction pr
+WHERE pr.reaction_date = '1992-05-10'
+AND   pr.is_documented = TRUE
+
+UNION ALL
+
+SELECT
+    'Official Political Record'     AS source_type,
+    MAKE_DATE(pm.meeting_year, 1, 1) AS event_date,
+    pm.politician_name              AS who_said_it,
+    pm.outcome                      AS what_was_claimed,
+    CASE WHEN pm.is_confirmed = TRUE
+         THEN 'Confirmed'
+         ELSE 'Disputed'
+    END                             AS tone
+FROM political_meetings pm
+WHERE pm.politician_name = 'P.V. Narasimha Rao'
+AND   pm.is_confirmed    = TRUE
+
+ORDER BY source_type;
+
+-- ============================================================
+-- CHAPTER 6: "The Political Storm" — PUZZLE QUESTIONS
+-- ============================================================
+
+
+-- ============================================================
+-- LEVEL 1 — "The Inquiry Begins"
+-- (Basic SELECT, WHERE, ORDER BY)
+-- ============================================================
+
+-- Q1.
+-- The JPC has just been formed.
+-- List all REAL witnesses who testified
+-- ordered by hearing date — show who said what
+-- and whether they were hostile.
+
+SELECT
+    hearing_date,
+    witness_name,
+    witness_role,
+    testimony_summary,
+    was_hostile,
+    evidence_submitted
+FROM jpc_hearings
+WHERE is_real = TRUE
+ORDER BY hearing_date ASC;
+
+
+-- Q2.
+-- The opposition is looking for every debate
+-- where a motion was actually PASSED.
+-- List all real parliament debates where
+-- motion_passed = TRUE — these are the moments
+-- that actually changed something.
+
+SELECT
+    debate_date,
+    house,
+    raised_by,
+    party,
+    subject,
+    govt_response
+FROM parliament_debates
+WHERE is_real        = TRUE
+AND   motion_passed  = TRUE
+ORDER BY debate_date ASC;
+
+
+-- Q3.
+-- Who actually got punished vs who walked free?
+-- Do a simple count from scapegoats_vs_escaped
+-- grouped by category.
+
+SELECT
+    category,
+    COUNT(*) AS person_count
+FROM scapegoats_vs_escaped
+GROUP BY category
+ORDER BY person_count DESC;
+
+
+-- Q4.
+-- The RBI is under fire.
+-- List all REAL RBI actions ordered by date —
+-- show the story of how they scrambled
+-- to fix the system they failed to protect.
+
+SELECT
+    action_date,
+    action_type,
+    description,
+    triggered_by,
+    banks_affected
+FROM rbi_actions
+WHERE is_real = TRUE
+ORDER BY action_date ASC;
+
+
+-- ============================================================
+-- LEVEL 2 — "Follow the Power"
+-- (Aggregations, GROUP BY, HAVING)
+-- ============================================================
+
+-- Q5.
+-- Which political party raised the most real
+-- debates in parliament about the scam?
+-- Group parliament_debates by party
+-- where is_real = TRUE and count debates per party.
+
+SELECT
+    party,
+    COUNT(*)                                            AS debates_raised,
+    SUM(CASE WHEN motion_passed THEN 1 ELSE 0 END)     AS motions_passed
+FROM parliament_debates
+WHERE is_real = TRUE
+GROUP BY party
+ORDER BY debates_raised DESC;
+
+
+-- Q6.
+-- How many real JPC witnesses submitted evidence
+-- vs those who just testified verbally?
+-- Group by evidence_submitted from real hearings.
+
+SELECT
+    evidence_submitted,
+    COUNT(*)    AS witness_count,
+    SUM(CASE WHEN was_hostile THEN 1 ELSE 0 END) AS hostile_count
+FROM jpc_hearings
+WHERE is_real = TRUE
+GROUP BY evidence_submitted;
+
+
+-- Q7.
+-- The investigative journalist wants to know:
+-- of all real people questioned,
+-- how many from each organisation
+-- managed to walk free (walked_free = TRUE)?
+
+SELECT
+    organisation,
+    COUNT(*)    AS people_questioned,
+    SUM(CASE WHEN walked_free  THEN 1 ELSE 0 END) AS walked_free,
+    SUM(CASE WHEN was_charged  THEN 1 ELSE 0 END) AS was_charged,
+    SUM(CASE WHEN was_convicted THEN 1 ELSE 0 END) AS was_convicted
+FROM scapegoats_vs_escaped
+GROUP BY organisation
+ORDER BY walked_free DESC;
+
+
+-- ============================================================
+-- LEVEL 3 — "Connecting the Web"
+-- (JOINs across tables)
+-- ============================================================
+
+-- Q8.
+-- The JPC committee is cross-referencing witnesses
+-- with politicians questioned on the same dates.
+-- JOIN jpc_hearings and politicians_questioned
+-- where hearing_date = question_date
+-- to find days when both happened simultaneously.
+
+SELECT
+    jh.hearing_date             AS date,
+    jh.witness_name             AS jpc_witness,
+    jh.witness_role             AS witness_role,
+    pq.politician_name          AS politician_questioned,
+    pq.allegation               AS allegation
+FROM jpc_hearings jh
+JOIN politicians_questioned pq
+    ON jh.hearing_date = pq.question_date
+WHERE jh.is_real = TRUE
+AND   pq.is_real = TRUE
+ORDER BY date;
+
+
+-- Q9.
+-- Connect parliament debates to RBI actions —
+-- find every case where an RBI action was taken
+-- within 30 days AFTER a parliament debate.
+-- These are the debates that actually forced RBI's hand.
+
+SELECT
+    pd.debate_date,
+    pd.raised_by,
+    pd.subject                          AS parliament_demand,
+    ra.action_date,
+    ra.action_type,
+    ra.description                      AS rbi_response,
+    ra.action_date - pd.debate_date     AS days_to_action
+FROM parliament_debates pd
+JOIN rbi_actions ra
+    ON ra.action_date BETWEEN pd.debate_date
+                          AND pd.debate_date + INTERVAL '30 days'
+WHERE pd.is_real = TRUE
+AND   ra.is_real = TRUE
+ORDER BY pd.debate_date;
+
+
+-- Q10.
+-- The verdict table is the most damning.
+-- Find all people who WALKED FREE despite
+-- being connected to organisations that
+-- also appear in the banks table from Chapter 3.
+-- JOIN scapegoats_vs_escaped with banks on organisation = bank_name.
+
+SELECT
+    se.person_name,
+    se.role_in_scam,
+    se.organisation,
+    se.reason_escaped,
+    b.bank_type,
+    b.involvement           AS bank_involvement
+FROM scapegoats_vs_escaped se
+JOIN banks b
+    ON se.organisation = b.bank_name
+WHERE se.walked_free = TRUE
+ORDER BY se.person_name;
+
+
+-- ============================================================
+-- LEVEL 4 — "The System on Trial"
+-- (Subqueries, CTEs, Window Functions)
+-- ============================================================
+
+-- Q11.
+-- Build a timeline of RBI actions using a window function.
+-- Show each action with a running COUNT of how many
+-- systemic changes had been made up to that point —
+-- and flag the first action and last action clearly.
+
+SELECT
+    action_date,
+    action_type,
+    description,
+    COUNT(*) OVER (
+        ORDER BY action_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    )                                                       AS cumulative_actions,
+    FIRST_VALUE(action_type) OVER (ORDER BY action_date)    AS first_action_taken,
+    LAST_VALUE(action_type)  OVER (
+        ORDER BY action_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+    )                                                       AS last_action_taken
+FROM rbi_actions
+WHERE is_real = TRUE
+ORDER BY action_date;
+
+
+-- Q12.
+-- The most powerful query in Chapter 6.
+-- Rank every person in scapegoats_vs_escaped
+-- by how senior their role was — using a manual
+-- seniority score — and show whether the most senior
+-- people escaped or were punished.
+
+WITH seniority AS (
+    SELECT
+        person_name,
+        organisation,
+        category,
+        walked_free,
+        was_convicted,
+        CASE
+            WHEN role_in_scam ILIKE '%Prime Minister%'    THEN 1
+            WHEN role_in_scam ILIKE '%RBI Governor%'      THEN 2
+            WHEN role_in_scam ILIKE '%Finance Minister%'  THEN 3
+            WHEN role_in_scam ILIKE '%Governor%'          THEN 4
+            WHEN role_in_scam ILIKE '%Deputy Governor%'   THEN 5
+            WHEN role_in_scam ILIKE '%architect%'         THEN 6
+            WHEN role_in_scam ILIKE '%officer%'           THEN 7
+            WHEN role_in_scam ILIKE '%broker%'            THEN 8
+            WHEN role_in_scam ILIKE '%Brother%'           THEN 9
+            ELSE 10
+        END AS seniority_rank
+    FROM scapegoats_vs_escaped
+)
+SELECT
+    person_name,
+    organisation,
+    seniority_rank,
+    category,
+    walked_free,
+    was_convicted,
+    CASE
+        WHEN seniority_rank <= 3 AND walked_free = TRUE
+        THEN 'HIGH POWER — ESCAPED'
+        WHEN seniority_rank > 5 AND was_convicted = TRUE
+        THEN 'LOW RANK — PUNISHED'
+        ELSE 'MIXED OUTCOME'
+    END AS justice_verdict
+FROM seniority
+ORDER BY seniority_rank;
+
+
+-- Q13.
+-- Find all JPC witnesses whose testimony was hostile
+-- AND who submitted evidence — these are the
+-- most dangerous witnesses to the establishment.
+-- Then check if any of them also appear in
+-- politicians_questioned using a subquery.
+
+SELECT
+    jh.witness_name,
+    jh.witness_role,
+    jh.testimony_summary,
+    CASE
+        WHEN jh.witness_name IN (
+            SELECT politician_name
+            FROM politicians_questioned
+            WHERE is_real = TRUE
+        )
+        THEN 'ALSO POLITICALLY QUESTIONED'
+        ELSE 'Witness only'
+    END AS dual_appearance
+FROM jpc_hearings jh
+WHERE jh.is_real           = TRUE
+AND   jh.was_hostile       = TRUE
+AND   jh.evidence_submitted = TRUE
+ORDER BY jh.hearing_date;
+
+
+-- ============================================================
+-- LEVEL 5 — "The Final Reckoning"
+-- (Multi-table CTE verdict query)
+-- ============================================================
+
+-- Q14.
+-- THE POLITICAL STORM VERDICT QUERY.
+-- Answer the one question the story keeps asking:
+-- Did the powerful escape while the small were punished?
+-- Combine:
+-- - Motions passed in parliament (parliament_debates)
+-- - RBI systemic reforms triggered (rbi_actions)
+-- - JPC hostile witnesses who gave evidence (jpc_hearings)
+-- - People who walked free despite senior roles (scapegoats_vs_escaped)
+-- - Politicians never charged despite allegations (politicians_questioned)
+
+WITH reforms_passed AS (
+    SELECT COUNT(*) AS total_reforms
+    FROM rbi_actions
+    WHERE is_real = TRUE
+    AND implemented = TRUE
+),
+motions_passed AS (
+    SELECT COUNT(*) AS total_motions
+    FROM parliament_debates
+    WHERE is_real = TRUE
+    AND motion_passed = TRUE
+),
+hostile_witnesses AS (
+    SELECT COUNT(*) AS total_hostile
+    FROM jpc_hearings
+    WHERE is_real           = TRUE
+    AND was_hostile         = TRUE
+    AND evidence_submitted  = TRUE
+),
+senior_escaped AS (
+    SELECT COUNT(*) AS total_escaped
+    FROM scapegoats_vs_escaped
+    WHERE walked_free = TRUE
+    AND organisation IN ('Government of India', 'Reserve Bank of India')
+),
+politicians_never_charged AS (
+    SELECT COUNT(*) AS total_uncharged
+    FROM politicians_questioned
+    WHERE is_real       = TRUE
+    AND charges_filed   = FALSE
+)
+SELECT
+    rp.total_reforms            AS rbi_reforms_implemented,
+    mp.total_motions            AS parliament_motions_passed,
+    hw.total_hostile            AS hostile_witnesses_with_evidence,
+    se.total_escaped            AS senior_officials_who_escaped,
+    pnc.total_uncharged         AS politicians_never_charged,
+    CASE
+        WHEN se.total_escaped > 0 AND pnc.total_uncharged > 5
+        THEN 'SYSTEM PROTECTED THE POWERFUL — justice was selective'
+        ELSE 'SYSTEM FUNCTIONED — accountability was applied evenly'
+    END                         AS final_verdict
+FROM reforms_passed         rp
+CROSS JOIN motions_passed   mp
+CROSS JOIN hostile_witnesses hw
+CROSS JOIN senior_escaped   se
+CROSS JOIN politicians_never_charged pnc;
+
+
+-- ============================================================
+-- BONUS — "The Briefcase"
+-- (The ₹1 crore question that was never answered)
+-- ============================================================
+
+-- BONUS Q.
+-- Harshad claimed he paid ₹1 crore to PM Narasimha Rao.
+-- Rao denied it. The JPC could not prove it.
+-- Pull every record across all Chapter 6 tables
+-- that mentions Narasimha Rao — hearings, debates,
+-- politicians questioned — and show the full picture
+-- of what the system recorded about this one claim.
+
+SELECT
+    'JPC Hearing'               AS table_source,
+    hearing_date::TEXT          AS event_date,
+    witness_name                AS person,
+    testimony_summary           AS record
+FROM jpc_hearings
+WHERE witness_name ILIKE '%Narasimha Rao%'
+AND   is_real = TRUE
+
+UNION ALL
+
+SELECT
+    'Parliament Debate'         AS table_source,
+    debate_date::TEXT           AS event_date,
+    raised_by                   AS person,
+    subject                     AS record
+FROM parliament_debates
+WHERE (subject ILIKE '%Narasimha Rao%'
+   OR  raised_by ILIKE '%Narasimha Rao%'
+   OR  govt_response ILIKE '%Rao%')
+AND   is_real = TRUE
+
+UNION ALL
+
+SELECT
+    'Politicians Questioned'    AS table_source,
+    question_date::TEXT         AS event_date,
+    politician_name             AS person,
+    allegation                  AS record
+FROM politicians_questioned
+WHERE politician_name ILIKE '%Narasimha Rao%'
+AND   is_real = TRUE
+
+UNION ALL
+
+SELECT
+    'Scapegoats vs Escaped'     AS table_source,
+    NULL                        AS event_date,
+    person_name                 AS person,
+    reason_escaped              AS record
+FROM scapegoats_vs_escaped
+WHERE person_name ILIKE '%Narasimha Rao%'
+
+ORDER BY table_source, event_date;
+
+-- ============================================================
+-- CHAPTER 7: "The Trial" — PUZZLE QUESTIONS
+-- ============================================================
+
+
+-- ============================================================
+-- LEVEL 1 — "The Docket Opens"
+-- (Basic SELECT, WHERE, ORDER BY)
+-- ============================================================
+
+-- Q1.
+-- The court clerk hands you a file.
+-- "Here are all 27 real cases against Harshad."
+-- List all real cases against Harshad Shantilal Mehta
+-- ordered by filed_date — show case number,
+-- charge type and current status.
+
+SELECT
+    case_number,
+    filed_date,
+    charge_type,
+    case_status,
+    verdict
+FROM court_cases
+WHERE is_real        = TRUE
+AND   accused_name   = 'Harshad Shantilal Mehta'
+ORDER BY filed_date ASC;
+
+
+-- Q2.
+-- How many of those 27 cases ended in
+-- conviction, pending, acquittal or dropped?
+-- Group by case_status from real Harshad cases.
+
+SELECT
+    case_status,
+    COUNT(*) AS case_count
+FROM court_cases
+WHERE is_real       = TRUE
+AND   accused_name  = 'Harshad Shantilal Mehta'
+GROUP BY case_status
+ORDER BY case_count DESC;
+
+
+-- Q3.
+-- Walk the custody timeline.
+-- List all REAL custody events for Harshad
+-- ordered by date — this is the human story.
+
+SELECT
+    event_date,
+    event_type,
+    location,
+    description,
+    harshad_condition
+FROM timeline_of_custody
+WHERE is_real = TRUE
+ORDER BY event_date ASC;
+
+
+-- Q4.
+-- How many times did Harshad apply for bail?
+-- From real bail records for Harshad —
+-- count how many were granted vs rejected.
+
+SELECT
+    bail_granted,
+    COUNT(*) AS bail_count
+FROM bail_records
+WHERE is_real       = TRUE
+AND   accused_name  = 'Harshad Shantilal Mehta'
+GROUP BY bail_granted;
+
+
+-- ============================================================
+-- LEVEL 2 — "Nine Years of Hearings"
+-- (Aggregations, GROUP BY, HAVING)
+-- ============================================================
+
+-- Q5.
+-- The defence lawyer wants a summary.
+-- For all real cases across ALL accused —
+-- group by accused_name and show
+-- how many cases each person faced,
+-- how many convictions and how many pending.
+
+SELECT
+    accused_name,
+    COUNT(*)                                                AS total_cases,
+    SUM(CASE WHEN case_status = 'Convicted' THEN 1 ELSE 0 END) AS convictions,
+    SUM(CASE WHEN case_status = 'Pending'   THEN 1 ELSE 0 END) AS pending,
+    SUM(CASE WHEN case_status = 'Acquitted' THEN 1 ELSE 0 END) AS acquittals,
+    SUM(CASE WHEN case_status = 'Dropped'   THEN 1 ELSE 0 END) AS dropped
+FROM court_cases
+WHERE is_real = TRUE
+GROUP BY accused_name
+ORDER BY total_cases DESC;
+
+
+-- Q6.
+-- Which courts handled the most real cases?
+-- Group by court_name from real cases
+-- and count cases per court.
+
+SELECT
+    court_name,
+    COUNT(*)    AS cases_heard,
+    SUM(CASE WHEN case_status = 'Convicted' THEN 1 ELSE 0 END) AS convictions
+FROM court_cases
+WHERE is_real = TRUE
+GROUP BY court_name
+ORDER BY cases_heard DESC;
+
+
+-- Q7.
+-- Analyse witness types in the real trial.
+-- Group by witness_type from real witnesses
+-- and count how many turned hostile
+-- vs stayed with their original testimony.
+
+SELECT
+    witness_type,
+    COUNT(*)                                                        AS total_witnesses,
+    SUM(CASE WHEN turned_hostile = TRUE  THEN 1 ELSE 0 END)        AS turned_hostile,
+    SUM(CASE WHEN turned_hostile = FALSE THEN 1 ELSE 0 END)        AS stayed_firm
+FROM witnesses
+WHERE is_real = TRUE
+GROUP BY witness_type
+ORDER BY total_witnesses DESC;
+
+
+-- ============================================================
+-- LEVEL 3 — "Building the Case"
+-- (JOINs across tables)
+-- ============================================================
+
+-- Q8.
+-- For each REAL convicted case,
+-- show the case details alongside
+-- the witnesses who testified in that case.
+-- JOIN court_cases and witnesses on case_id.
+
+SELECT
+    cc.case_number,
+    cc.charge_type,
+    cc.verdict,
+    w.witness_name,
+    w.witness_type,
+    w.turned_hostile,
+    w.testimony_summary
+FROM court_cases cc
+JOIN witnesses w
+    ON cc.case_id   = w.case_id
+WHERE cc.is_real    = TRUE
+AND   cc.case_status = 'Convicted'
+AND   w.is_real     = TRUE
+ORDER BY cc.case_number, w.witness_type;
+
+
+-- Q9.
+-- Show every bail application alongside
+-- the case it was filed for.
+-- JOIN bail_records and court_cases on case_id
+-- for real records only — show the full
+-- back-and-forth between freedom and custody.
+
+SELECT
+    br.bail_applied_date,
+    br.bail_granted,
+    br.bail_amount_cr,
+    br.granted_by,
+    br.conditions,
+    br.revoked,
+    cc.case_number,
+    cc.charge_type
+FROM bail_records br
+JOIN court_cases cc
+    ON br.case_id   = cc.case_id
+WHERE br.is_real    = TRUE
+AND   cc.is_real    = TRUE
+ORDER BY br.bail_applied_date ASC;
+
+
+-- Q10.
+-- Connect appeals to their original cases.
+-- JOIN appeals and court_cases on case_id
+-- for real records — show what was appealed
+-- and what the original case was about.
+
+SELECT
+    a.appeal_date,
+    a.appellant,
+    a.appeal_court,
+    a.grounds,
+    a.outcome,
+    cc.case_number,
+    cc.charge_type,
+    cc.case_status      AS original_case_status
+FROM appeals a
+JOIN court_cases cc
+    ON a.case_id    = cc.case_id
+WHERE a.is_real     = TRUE
+AND   cc.is_real    = TRUE
+ORDER BY a.appeal_date ASC;
+
+
+-- ============================================================
+-- LEVEL 4 — "The Long War"
+-- (Subqueries, CTEs, Window Functions)
+-- ============================================================
+
+-- Q11.
+-- Show the custody timeline with a
+-- running COUNT of how many events
+-- Harshad had faced by each date —
+-- and label the phase he was in.
+
+SELECT
+    event_date,
+    event_type,
+    harshad_condition,
+    COUNT(*) OVER (
+        ORDER BY event_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    )                                       AS events_faced_so_far,
+    CASE
+        WHEN event_date < '1993-01-01' THEN 'Phase 1 — First Arrest'
+        WHEN event_date < '1996-01-01' THEN 'Phase 2 — Bail Wars'
+        WHEN event_date < '1999-01-01' THEN 'Phase 3 — Trial Grind'
+        WHEN event_date < '2001-11-01' THEN 'Phase 4 — Convictions'
+        ELSE                                'Phase 5 — Final Days'
+    END                                     AS trial_phase
+FROM timeline_of_custody
+WHERE is_real = TRUE
+ORDER BY event_date;
+
+
+-- Q12.
+-- Build a case-by-case damage report.
+-- For each REAL convicted case against Harshad,
+-- show the case, conviction date, and how many
+-- days it took from filing to verdict.
+-- Use a CTE and RANK by longest case duration.
+
+WITH case_duration AS (
+    SELECT
+        case_number,
+        charge_type,
+        filed_date,
+        verdict_date,
+        verdict,
+        verdict_date - filed_date AS days_to_verdict
+    FROM court_cases
+    WHERE is_real       = TRUE
+    AND   case_status   = 'Convicted'
+    AND   verdict_date  IS NOT NULL
+    AND   accused_name  = 'Harshad Shantilal Mehta'
+)
+SELECT
+    case_number,
+    charge_type,
+    filed_date,
+    verdict_date,
+    days_to_verdict,
+    RANK() OVER (ORDER BY days_to_verdict DESC) AS slowest_justice_rank
+FROM case_duration
+ORDER BY slowest_justice_rank;
+
+
+-- Q13.
+-- Find all cases that were still PENDING
+-- when Harshad died on Dec 31 2001.
+-- These are the cases where justice
+-- was never delivered to either side.
+-- Use a subquery to get the death date
+-- from timeline_of_custody.
+
+SELECT
+    case_number,
+    filed_date,
+    charge_type,
+    case_status,
+    verdict,
+    (
+        SELECT event_date
+        FROM timeline_of_custody
+        WHERE event_type = 'Death'
+        AND   is_real    = TRUE
+        LIMIT 1
+    ) AS harshad_died_on,
+    (
+        SELECT event_date
+        FROM timeline_of_custody
+        WHERE event_type = 'Death'
+        AND   is_real    = TRUE
+        LIMIT 1
+    ) - filed_date AS days_case_was_active
+FROM court_cases
+WHERE is_real       = TRUE
+AND   case_status   = 'Pending'
+AND   accused_name  = 'Harshad Shantilal Mehta'
+ORDER BY filed_date;
+
+
+-- ============================================================
+-- LEVEL 5 — "The Final Reckoning"
+-- (Multi-table CTE verdict query)
+-- ============================================================
+
+-- Q14.
+-- THE TRIAL VERDICT QUERY.
+-- Build the complete account of 9 years of trial:
+-- - Total cases filed vs resolved vs pending at death
+-- - Total bail applications and how many were granted
+-- - Total appeals filed and how many were resolved
+-- - How many witnesses turned hostile
+-- - The last recorded event before death
+-- One query. Nine years. One man.
+
+WITH case_summary AS (
+    SELECT
+        COUNT(*)                                                        AS total_cases,
+        SUM(CASE WHEN case_status = 'Convicted' THEN 1 ELSE 0 END)    AS convicted,
+        SUM(CASE WHEN case_status = 'Pending'   THEN 1 ELSE 0 END)    AS pending_at_death,
+        SUM(CASE WHEN case_status = 'Dropped'   THEN 1 ELSE 0 END)    AS dropped,
+        SUM(CASE WHEN case_status = 'Acquitted' THEN 1 ELSE 0 END)    AS acquitted
+    FROM court_cases
+    WHERE is_real       = TRUE
+    AND   accused_name  = 'Harshad Shantilal Mehta'
+),
+bail_summary AS (
+    SELECT
+        COUNT(*)                                                            AS total_bail_applications,
+        SUM(CASE WHEN bail_granted = TRUE  THEN 1 ELSE 0 END)             AS granted,
+        SUM(CASE WHEN bail_granted = FALSE THEN 1 ELSE 0 END)             AS rejected
+    FROM bail_records
+    WHERE is_real       = TRUE
+    AND   accused_name  = 'Harshad Shantilal Mehta'
+),
+appeal_summary AS (
+    SELECT
+        COUNT(*)                                                            AS total_appeals,
+        SUM(CASE WHEN outcome IS NOT NULL THEN 1 ELSE 0 END)              AS resolved,
+        SUM(CASE WHEN outcome IS NULL     THEN 1 ELSE 0 END)              AS unresolved_at_death
+    FROM appeals
+    WHERE is_real   = TRUE
+    AND   appellant = 'Harshad Shantilal Mehta'
+),
+hostile_witnesses AS (
+    SELECT COUNT(*) AS witnesses_turned_hostile
+    FROM witnesses
+    WHERE is_real        = TRUE
+    AND   turned_hostile = TRUE
+),
+final_event AS (
+    SELECT
+        event_date,
+        event_type,
+        description
+    FROM timeline_of_custody
+    WHERE is_real = TRUE
+    ORDER BY event_date DESC
+    LIMIT 1
+)
+SELECT
+    cs.total_cases,
+    cs.convicted,
+    cs.pending_at_death,
+    cs.dropped,
+    cs.acquitted,
+    bs.total_bail_applications,
+    bs.granted                  AS bail_granted,
+    bs.rejected                 AS bail_rejected,
+    aps.total_appeals,
+    aps.resolved                AS appeals_resolved,
+    aps.unresolved_at_death,
+    hw.witnesses_turned_hostile,
+    fe.event_date               AS last_recorded_event_date,
+    fe.event_type               AS last_event_type,
+    fe.description              AS what_happened_at_the_end
+FROM case_summary       cs
+CROSS JOIN bail_summary bs
+CROSS JOIN appeal_summary aps
+CROSS JOIN hostile_witnesses hw
+CROSS JOIN final_event  fe;
+
+
+-- ============================================================
+-- BONUS — "December 31, 2001"
+-- (The last day — pulling everything together)
+-- ============================================================
+
+-- BONUS Q.
+-- On December 31 2001, Harshad Mehta died in
+-- Thane Civil Hospital. 23 cases still pending.
+-- Pull a final record:
+-- His first arrest date, his death date,
+-- how many days he fought the system,
+-- how many cases were filed vs resolved,
+-- and the very last custody event recorded.
+
+WITH first_arrest AS (
+    SELECT event_date AS arrested_on
+    FROM timeline_of_custody
+    WHERE event_type = 'First Arrest'
+    AND   is_real    = TRUE
+    LIMIT 1
+),
+death_day AS (
+    SELECT event_date AS died_on, description AS final_record
+    FROM timeline_of_custody
+    WHERE event_type = 'Death'
+    AND   is_real    = TRUE
+    LIMIT 1
+),
+case_count AS (
+    SELECT
+        COUNT(*) AS total_cases_filed,
+        SUM(CASE WHEN case_status IN ('Convicted','Acquitted','Dropped')
+                 THEN 1 ELSE 0 END) AS cases_resolved,
+        SUM(CASE WHEN case_status = 'Pending'
+                 THEN 1 ELSE 0 END) AS cases_unresolved
+    FROM court_cases
+    WHERE is_real       = TRUE
+    AND   accused_name  = 'Harshad Shantilal Mehta'
+)
+SELECT
+    fa.arrested_on,
+    dd.died_on,
+    dd.died_on - fa.arrested_on     AS days_fought_the_system,
+    cc.total_cases_filed,
+    cc.cases_resolved,
+    cc.cases_unresolved,
+    dd.final_record                 AS last_words_of_the_record
+FROM first_arrest   fa
+CROSS JOIN death_day dd
+CROSS JOIN case_count cc;
+
+-- ============================================================
+-- CHAPTER 8: "The Comeback" — PUZZLE QUESTIONS
+-- ============================================================
+
+
+-- ============================================================
+-- LEVEL 1 — "The Bull is Back"
+-- (Basic SELECT, WHERE, ORDER BY)
+-- ============================================================
+
+-- Q1.
+-- It is 1997. Harshad is on bail.
+-- He launches harshadmehta.com.
+-- List all real predictions from his website
+-- ordered by date — show stock, predicted price,
+-- actual price and whether he was accurate.
+
+SELECT
+    prediction_date,
+    stock_name,
+    predicted_price,
+    actual_price,
+    accuracy_pct,
+    was_accurate
+FROM stock_predictions
+WHERE is_real             = TRUE
+AND   prediction_source   = 'harshadmehta.com'
+ORDER BY prediction_date ASC;
+
+
+-- Q2.
+-- List all REAL media interviews in order.
+-- Show what Harshad claimed, his tone
+-- and how the public reacted.
+-- This is the story of a man who never
+-- stopped fighting in public.
+
+SELECT
+    interview_date,
+    publication,
+    journalist,
+    key_claim,
+    harshad_tone,
+    public_reaction,
+    was_controversial
+FROM media_interviews
+WHERE is_real = TRUE
+ORDER BY interview_date ASC;
+
+
+-- Q3.
+-- Harshad kept trading through family accounts.
+-- List all real comeback trades ordered by date —
+-- show which account he routed through
+-- and whether he made profit or loss.
+
+SELECT
+    trade_date,
+    stock_name,
+    trade_type,
+    quantity,
+    price_per_share,
+    routed_through,
+    profit_loss,
+    is_direct
+FROM comeback_trades
+WHERE is_real = TRUE
+ORDER BY trade_date ASC;
+
+
+-- Q4.
+-- List all real legal victories ordered by date.
+-- These are the moments the system
+-- had to give ground — even slightly.
+
+SELECT
+    victory_date,
+    court_name,
+    victory_type,
+    description,
+    significance
+FROM legal_victories
+WHERE is_real = TRUE
+ORDER BY victory_date ASC;
+
+
+-- ============================================================
+-- LEVEL 2 — "Counting the Comeback"
+-- (Aggregations, GROUP BY, HAVING)
+-- ============================================================
+
+-- Q5.
+-- How accurate was Harshad's website overall?
+-- From real predictions with a non-null was_accurate,
+-- count how many were accurate vs inaccurate
+-- and calculate average accuracy_pct.
+
+SELECT
+    was_accurate,
+    COUNT(*)                    AS prediction_count,
+    ROUND(AVG(accuracy_pct), 2) AS avg_accuracy_pct
+FROM stock_predictions
+WHERE is_real        = TRUE
+AND   was_accurate   IS NOT NULL
+GROUP BY was_accurate
+ORDER BY was_accurate DESC;
+
+
+-- Q6.
+-- Which comeback trades were profitable
+-- vs loss-making?
+-- Group real trades by whether profit_loss > 0
+-- and sum total profit and total loss separately.
+
+SELECT
+    CASE WHEN profit_loss > 0 THEN 'Profit'
+         WHEN profit_loss < 0 THEN 'Loss'
+         ELSE 'Breakeven'
+    END                         AS trade_outcome,
+    COUNT(*)                    AS trade_count,
+    SUM(profit_loss)            AS total_amount,
+    ROUND(AVG(profit_loss), 2)  AS avg_per_trade
+FROM comeback_trades
+WHERE is_real = TRUE
+GROUP BY
+    CASE WHEN profit_loss > 0 THEN 'Profit'
+         WHEN profit_loss < 0 THEN 'Loss'
+         ELSE 'Breakeven' END
+ORDER BY total_amount DESC;
+
+
+-- Q7.
+-- The legacy table holds the final verdict
+-- on what Harshad left behind.
+-- Group by legacy_type and count
+-- how many positive vs negative legacies
+-- exist in each category.
+
+SELECT
+    legacy_type,
+    COUNT(*)                                                        AS total_entries,
+    SUM(CASE WHEN is_positive = TRUE  THEN 1 ELSE 0 END)           AS positive_legacies,
+    SUM(CASE WHEN is_positive = FALSE THEN 1 ELSE 0 END)           AS negative_legacies,
+    SUM(CASE WHEN is_positive IS NULL THEN 1 ELSE 0 END)           AS unanswered
+FROM legacy
+GROUP BY legacy_type
+ORDER BY total_entries DESC;
+
+
+-- ============================================================
+-- LEVEL 3 — "The Full Picture"
+-- (JOINs across tables)
+-- ============================================================
+
+-- Q8.
+-- For each real stock prediction that was accurate,
+-- check if Harshad also traded that same stock
+-- in the comeback_trades table.
+-- JOIN stock_predictions and comeback_trades
+-- on stock_name — show the prediction alongside
+-- the actual trade he made.
+
+SELECT
+    sp.prediction_date,
+    sp.stock_name,
+    sp.predicted_price,
+    sp.actual_price,
+    sp.accuracy_pct,
+    ct.trade_date,
+    ct.trade_type,
+    ct.quantity,
+    ct.routed_through,
+    ct.profit_loss
+FROM stock_predictions sp
+JOIN comeback_trades ct
+    ON sp.stock_name    = ct.stock_name
+WHERE sp.is_real        = TRUE
+AND   ct.is_real        = TRUE
+AND   sp.was_accurate   = TRUE
+ORDER BY sp.prediction_date;
+
+
+-- Q9.
+-- Connect media_interviews to legal_victories
+-- by finding interviews that happened WITHIN
+-- 60 days of a legal victory —
+-- Harshad talking to the press
+-- right after a court win.
+
+SELECT
+    lv.victory_date,
+    lv.victory_type,
+    lv.significance,
+    mi.interview_date,
+    mi.publication,
+    mi.key_claim,
+    mi.harshad_tone,
+    mi.interview_date - lv.victory_date     AS days_after_victory
+FROM legal_victories lv
+JOIN media_interviews mi
+    ON mi.interview_date BETWEEN lv.victory_date
+                             AND lv.victory_date + INTERVAL '60 days'
+WHERE lv.is_real    = TRUE
+AND   mi.is_real    = TRUE
+ORDER BY lv.victory_date;
+
+
+-- Q10.
+-- The legacy table mentions SEBI, NSE,
+-- dematerialisation and circuit breakers —
+-- all born from the scam.
+-- JOIN legacy with rbi_actions from Chapter 6
+-- on year_implemented = EXTRACT(YEAR FROM action_date)
+-- to show reforms that happened in the same year.
+
+SELECT
+    l.year_implemented  AS reform_year,
+    l.legacy_type,
+    l.description       AS legacy_description,
+    l.beneficiary,
+    ra.action_type,
+    ra.description      AS rbi_action,
+    ra.banks_affected
+FROM legacy l
+JOIN rbi_actions ra
+    ON l.year_implemented = EXTRACT(YEAR FROM ra.action_date)::INT
+WHERE l.is_positive  = TRUE
+AND   ra.is_real     = TRUE
+ORDER BY l.year_implemented, l.legacy_type;
+
+
+-- ============================================================
+-- LEVEL 4 — "The Man Behind the Myth"
+-- (Subqueries, CTEs, Window Functions)
+-- ============================================================
+
+-- Q11.
+-- Build a yearly performance summary of
+-- Harshad's comeback trades using a window function.
+-- Show each year, total profit/loss that year,
+-- and running total profit across all comeback years.
+
+SELECT
+    EXTRACT(YEAR FROM trade_date)::INT          AS trade_year,
+    SUM(profit_loss)                            AS yearly_profit_loss,
+    SUM(SUM(profit_loss)) OVER (
+        ORDER BY EXTRACT(YEAR FROM trade_date)
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    )                                           AS cumulative_profit_loss,
+    COUNT(*)                                    AS trades_that_year
+FROM comeback_trades
+WHERE is_real       = TRUE
+AND   profit_loss   IS NOT NULL
+GROUP BY EXTRACT(YEAR FROM trade_date)
+ORDER BY trade_year;
+
+
+-- Q12.
+-- Rank all comeback era stocks by total
+-- profit generated across all trades.
+-- Use RANK() and show whether the stock
+-- was also predicted on the website.
+
+WITH stock_profit AS (
+    SELECT
+        stock_name,
+        SUM(profit_loss)    AS total_profit,
+        COUNT(*)            AS trade_count
+    FROM comeback_trades
+    WHERE is_real       = TRUE
+    AND   profit_loss   IS NOT NULL
+    GROUP BY stock_name
+)
+SELECT
+    sp.stock_name,
+    sp.total_profit,
+    sp.trade_count,
+    RANK() OVER (ORDER BY sp.total_profit DESC)     AS profit_rank,
+    CASE
+        WHEN sp.stock_name IN (
+            SELECT stock_name
+            FROM stock_predictions
+            WHERE is_real = TRUE
+            AND   prediction_source = 'harshadmehta.com'
+        )
+        THEN 'Also predicted on website'
+        ELSE 'Trade only — no public prediction'
+    END                                             AS prediction_status
+FROM stock_profit sp
+ORDER BY profit_rank;
+
+
+-- Q13.
+-- Find the THREE most significant legal victories
+-- based on a manual significance scoring —
+-- and show whether each was followed by
+-- a media interview within 90 days.
+
+WITH scored_victories AS (
+    SELECT
+        victory_id,
+        victory_date,
+        court_name,
+        victory_type,
+        description,
+        significance,
+        CASE
+            WHEN victory_type ILIKE '%Bail%'            THEN 3
+            WHEN victory_type ILIKE '%Case dropped%'    THEN 5
+            WHEN victory_type ILIKE '%abated%'          THEN 5
+            WHEN victory_type ILIKE '%Property%'        THEN 4
+            WHEN victory_type ILIKE '%Constitutional%'  THEN 4
+            ELSE 2
+        END AS significance_score
+    FROM legal_victories
+    WHERE is_real = TRUE
+)
+SELECT
+    sv.victory_date,
+    sv.victory_type,
+    sv.significance_score,
+    sv.description,
+    CASE
+        WHEN EXISTS (
+            SELECT 1
+            FROM media_interviews mi
+            WHERE mi.is_real = TRUE
+            AND   mi.interview_date BETWEEN sv.victory_date
+                                        AND sv.victory_date + INTERVAL '90 days'
+        )
+        THEN 'Yes — spoke to press after win'
+        ELSE 'No press interview found'
+    END AS followed_by_interview
+FROM scored_victories sv
+ORDER BY sv.significance_score DESC, sv.victory_date
+LIMIT 3;
+
+
+-- ============================================================
+-- LEVEL 5 — "The Final Reckoning"
+-- (Multi-table CTE — The Complete Harshad Story)
+-- ============================================================
+
+-- Q14.
+-- THE GAME'S FINAL VERDICT QUERY.
+-- Everything the game has built across 8 chapters
+-- comes down to this one query.
+-- Combine:
+-- - His peak trade year profit (comeback_trades)
+-- - His website prediction accuracy (stock_predictions)
+-- - His total legal victories (legal_victories)
+-- - Total positive vs negative legacies (legacy)
+-- - His most defiant interview claim (media_interviews)
+-- - His final custody event (timeline_of_custody Ch.7)
+-- One query. One man. One story.
+
+WITH peak_trade_year AS (
+    SELECT
+        EXTRACT(YEAR FROM trade_date)::INT  AS best_year,
+        SUM(profit_loss)                    AS best_year_profit
+    FROM comeback_trades
+    WHERE is_real       = TRUE
+    AND   profit_loss   IS NOT NULL
+    GROUP BY EXTRACT(YEAR FROM trade_date)
+    ORDER BY best_year_profit DESC
+    LIMIT 1
+),
+website_accuracy AS (
+    SELECT
+        COUNT(*)                                                    AS total_predictions,
+        SUM(CASE WHEN was_accurate = TRUE  THEN 1 ELSE 0 END)      AS accurate_count,
+        ROUND(
+            SUM(CASE WHEN was_accurate = TRUE THEN 1 ELSE 0 END)
+            * 100.0
+            / NULLIF(COUNT(*) FILTER (WHERE was_accurate IS NOT NULL), 0)
+        , 2)                                                        AS accuracy_rate_pct
+    FROM stock_predictions
+    WHERE is_real = TRUE
+),
+total_victories AS (
+    SELECT COUNT(*) AS victories_won
+    FROM legal_victories
+    WHERE is_real = TRUE
+),
+legacy_balance AS (
+    SELECT
+        SUM(CASE WHEN is_positive = TRUE  THEN 1 ELSE 0 END)   AS positive_legacies,
+        SUM(CASE WHEN is_positive = FALSE THEN 1 ELSE 0 END)   AS negative_legacies,
+        SUM(CASE WHEN is_positive IS NULL THEN 1 ELSE 0 END)   AS unanswered_legacies
+    FROM legacy
+),
+most_defiant_claim AS (
+    SELECT key_claim, publication, interview_date
+    FROM media_interviews
+    WHERE is_real       = TRUE
+    AND   harshad_tone  = 'Defiant'
+    ORDER BY interview_date ASC
+    LIMIT 1
+),
+final_moment AS (
+    SELECT event_date, event_type, description, harshad_condition
+    FROM timeline_of_custody
+    WHERE is_real = TRUE
+    ORDER BY event_date DESC
+    LIMIT 1
+)
+SELECT
+    pty.best_year                   AS most_profitable_comeback_year,
+    pty.best_year_profit            AS peak_year_profit_rs,
+    wa.total_predictions            AS website_predictions_made,
+    wa.accurate_count               AS accurate_predictions,
+    wa.accuracy_rate_pct            AS prediction_accuracy_pct,
+    tv.victories_won                AS court_victories,
+    lb.positive_legacies            AS things_he_built,
+    lb.negative_legacies            AS lives_he_damaged,
+    lb.unanswered_legacies          AS questions_never_answered,
+    mdc.interview_date              AS most_defiant_moment_date,
+    mdc.publication                 AS spoke_to,
+    mdc.key_claim                   AS what_he_said,
+    fm.event_date                   AS story_ends_on,
+    fm.event_type                   AS how_it_ended,
+    fm.harshad_condition            AS condition_at_end
+FROM peak_trade_year    pty
+CROSS JOIN website_accuracy wa
+CROSS JOIN total_victories  tv
+CROSS JOIN legacy_balance   lb
+CROSS JOIN most_defiant_claim mdc
+CROSS JOIN final_moment     fm;
+
+
+-- ============================================================
+-- BONUS — "The Unanswered Question"
+-- The last query of the entire game
+-- ============================================================
+
+-- BONUS Q.
+-- The legacy table has one row where is_positive IS NULL.
+-- That is the philosophical row — the question
+-- the game has been asking since Chapter 1.
+-- Pull that row. Then pull the first event
+-- from timeline_of_custody (his first day in Bombay)
+-- and the last event (his death).
+-- Three rows. The beginning, the question, and the end.
+
+SELECT
+    'The Beginning'         AS moment,
+    event_date::TEXT        AS date,
+    event_type              AS what,
+    description             AS detail
+FROM timeline_of_custody
+WHERE is_real = TRUE
+ORDER BY event_date ASC
+LIMIT 1
+
+UNION ALL
+
+SELECT
+    'The Unanswered Question'   AS moment,
+    year_implemented::TEXT      AS date,
+    legacy_type                 AS what,
+    description                 AS detail
+FROM legacy
+WHERE is_positive IS NULL
+
+UNION ALL
+
+SELECT
+    'The End'               AS moment,
+    event_date::TEXT        AS date,
+    event_type              AS what,
+    description             AS detail
+FROM timeline_of_custody
+WHERE is_real = TRUE
+ORDER BY event_date DESC
+LIMIT 1;
